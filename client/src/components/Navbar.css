@@ -1,0 +1,357 @@
+/* =====================
+   NAVBAR
+===================== */
+
+.nb-header {
+  position: fixed;
+  top: 40px; /* sits below the announcement bar */
+  left: 0;
+  width: 100%;
+  height: 72px;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+
+  background: rgba(18, 18, 18, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── logo ── */
+.nb-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ── nav links ── */
+.nb-nav {
+  display: flex;
+  gap: 32px;
+}
+
+.nb-nav a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nb-nav a:hover { color: #fff; }
+
+/* ── icon group ── */
+.nb-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nb-icons button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.nb-icons button:hover { color: #fff; }
+
+.nb-hamburger { display: none; }
+
+/* ── search overlay ── */
+.nb-search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 140px;
+}
+
+.nb-search-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 90%;
+  max-width: 620px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 12px;
+}
+
+.nb-search-icon { color: rgba(255,255,255,0.5); flex-shrink: 0; }
+
+.nb-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1.4rem;
+  font-family: inherit;
+}
+
+.nb-search-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.nb-search-form button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  display: flex;
+  transition: color .2s;
+}
+
+.nb-search-form button:hover { color: #fff; }
+
+/* ── mobile drawer ── */
+.nb-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+
+.nb-drawer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  background: #111;
+  padding: 72px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.nb-drawer-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+}
+
+.nb-drawer a {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.nb-drawer a:hover { color: #fff; }
+
+/* ── responsive ── */
+@media (max-width: 860px) {
+  .nb-nav { display: none; }
+  .nb-hamburger { display: flex; }
+}
+
+/* =====================
+   ACCOUNT MODAL
+===================== */
+
+.nb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.nb-modal {
+  background: #fff;
+  color: #111;
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+}
+
+/* header row */
+.nb-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nb-modal-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.nb-modal-close {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+
+.nb-modal-close:hover { background: #e0e0e0; }
+
+/* sign in with shop button */
+.nb-shop-btn {
+  width: 100%;
+  padding: 17px;
+  border: none;
+  border-radius: 50px;
+  background: #5c3df4;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+
+.nb-shop-btn:hover {
+  background: #4a2edb;
+  transform: translateY(-1px);
+}
+
+/* OR divider */
+.nb-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #aaa;
+  font-size: .8rem;
+  letter-spacing: 2px;
+}
+
+.nb-divider::before,
+.nb-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e5e5;
+}
+
+/* email form */
+.nb-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nb-email-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fafafa;
+  transition: border-color .2s;
+}
+
+.nb-email-wrap:focus-within { border-color: #aaa; }
+
+.nb-email-wrap input {
+  flex: 1;
+  padding: 16px 18px;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #111;
+  outline: none;
+}
+
+.nb-email-wrap input::placeholder { color: #bbb; }
+
+.nb-email-wrap button {
+  background: none;
+  border: none;
+  padding: 0 18px;
+  font-size: 1.2rem;
+  color: #555;
+  cursor: pointer;
+  transition: color .2s;
+}
+
+.nb-email-wrap button:hover { color: #111; }
+
+/* newsletter checkbox */
+.nb-newsletter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .9rem;
+  color: #444;
+  cursor: pointer;
+}
+
+.nb-newsletter-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #5c3df4;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* orders / profile quick links */
+.nb-modal-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.nb-modal-links button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+  color: #222;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.nb-modal-links button:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}

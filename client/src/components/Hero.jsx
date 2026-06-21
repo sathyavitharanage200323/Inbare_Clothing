@@ -1,13 +1,24 @@
+import heroVideo from "../assets/hearo.mp4";
+
 function Hero() {
   return (
     <section className="hero">
-      <div className="hero-overlay"></div>
+      {/* Video pinned to the right */}
+      <div className="hero-video-wrap">
+        <video
+          src={heroVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="hero-video"
+        />
+        {/* Fade from left so text stays readable */}
+        <div className="hero-video-fade" />
+      </div>
 
-      <img
-        src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1920"
-        alt="Fashion Model"
-        className="hero-image"
-      />
+      {/* Dark base so left side is never bare */}
+      <div className="hero-bg" />
 
       <div className="hero-content">
         <p className="tagline">NEW SEASON 2026</p>

@@ -90,29 +90,54 @@ a{
       HERO
 ===================== */
 
-.hero{
-  position:relative;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: #000;
+  padding-top: 112px; /* announcement bar (40px) + navbar (72px) */
 }
 
-.hero-image{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+/* Solid dark base so the left side is never bare */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: #0a0a0a;
+  z-index: 0;
 }
 
-.hero-overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
+/* Video container — right-aligned, full hero height */
+.hero-video-wrap {
+  position: absolute;
+  right: 0;
+  top: 10%;
+  width: 52.5%;
+  height: 97.5%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Gradient fades the left edge of the video into the dark background */
+.hero-video-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
     to right,
-    rgba(0,0,0,0.85),
-    rgba(0,0,0,0.45)
+    #0a0a0a 0%,
+    rgba(10, 10, 10, 0.75) 25%,
+    rgba(10, 10, 10, 0.15) 60%,
+    transparent 100%
   );
 }
 
@@ -121,6 +146,7 @@ a{
   z-index:10;
   width:90%;
   max-width:1400px;
+  padding-left: 8%;
 }
 
 .tagline{
@@ -269,6 +295,24 @@ a{
 
   .hero-content h1{
     font-size:4rem;
+  }
+
+  /* On tablets/mobile, video goes full width behind everything */
+  .hero-video-wrap {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    transform: none;
+    opacity: 0.45;
+  }
+
+  .hero-video-fade {
+    background: linear-gradient(
+      to right,
+      #0a0a0a 0%,
+      rgba(10,10,10,0.6) 50%,
+      rgba(10,10,10,0.3) 100%
+    );
   }
 
   .products{
