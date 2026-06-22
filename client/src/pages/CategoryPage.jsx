@@ -19,6 +19,37 @@ import og7 from '../assets/Oversized Graphic Tee-7.jpg';
 import og8 from '../assets/Oversized Graphic Tee-8.jpg';
 import og9 from '../assets/Oversized Graphic Tee-9.jpg';
 
+// Crop Top
+import cropAll from '../assets/Crop Tee-all.jpg';
+import cropBlack from '../assets/Crop Tee-1.jpg';
+import cropWhite from '../assets/Crop Tee-2.jpg';
+import cropBrown from '../assets/Crop Tee-3.jpg';
+
+// Essential Rib Tee
+import ribAsh from '../assets/Rib Tee - ash.jpg';
+import ribBlack from '../assets/Rib Tee - Black.jpg';
+import ribLightAsh from '../assets/Rib Tee - lightash.jpg';
+import ribPink from '../assets/Rib Tee - pink.jpg';
+import ribRed from '../assets/Rib Tee - red.jpg';
+import ribWhite from '../assets/Rib Tee - white.jpg';
+
+// Longline Pocket Tee
+import pocketBurgundy from '../assets/Longline Pocket Tee-1.jpg';
+import pocketCharcoal from '../assets/Longline Pocket Tee-2.jpg';
+import pocketWhite from '../assets/Longline Pocket Tee-3.jpg';
+
+// Classic Pullover Hoodie
+import hoodieNavy from '../assets/Classic Pullover Hoodie-1.jpg';
+import hoodieBlack from '../assets/Classic Pullover Hoodie-2.jpg';
+import hoodieBeige from '../assets/Classic Pullover Hoodie-3.jpg';
+import hoodiePink from '../assets/Classic Pullover Hoodie-4.jpg';
+import hoodieBlue from '../assets/Classic Pullover Hoodie-5.jpg';
+import hoodieBrown from '../assets/Classic Pullover Hoodie-6.jpg';
+
+// Zip-Up Tech Hoodie
+import techBurgundy from '../assets/Zip-Up Tech Hoodie-3.jpg';
+import techSlate from '../assets/Zip-Up Tech Hoodie-4.jpg';
+
 /* ── mock product data per category ── */
 const categoryData = {
   't-shirts': {
@@ -60,16 +91,76 @@ const categoryData = {
         ],
         sizes: ['M', 'L', 'XL', 'XXL'],
       },
-      { id: 4, name: 'Crop Top',      price: 32, img: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?q=80&w=600', colors: null, sizes: ['XS', 'S', 'M', 'L'] },
-      { id: 5, name: 'Essential Rib Tee',     price: 27, img: 'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?q=80&w=600', colors: null, sizes: ['XS', 'S', 'M', 'L', 'XL'] },
-      { id: 6, name: 'Longline Pocket Tee',   price: 36, img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL'] },
+      {
+        id: 4,
+        name: 'Crop Top',
+        price: 32,
+        img: cropAll,
+        colors: [
+          { hex: '#111111', img: cropBlack, label: 'Black' },
+          { hex: '#ffffff', img: cropWhite, label: 'White' },
+          { hex: '#4c3026', img: cropBrown, label: 'Brown' },
+        ],
+        sizes: ['XS', 'S', 'M', 'L'],
+      },
+      {
+        id: 5,
+        name: 'Essential Rib Tee',
+        price: 27,
+        img: ribAsh,
+        colors: [
+          { hex: '#7a7a7a', img: ribAsh, label: 'Ash' },
+          { hex: '#111111', img: ribBlack, label: 'Black' },
+          { hex: '#bebebe', img: ribLightAsh, label: 'Light Ash' },
+          { hex: '#e9b5b5', img: ribPink, label: 'Pink' },
+          { hex: '#b91c1c', img: ribRed, label: 'Red' },
+          { hex: '#ffffff', img: ribWhite, label: 'White' },
+        ],
+        sizes: ['XS', 'S', 'M', 'L', 'XL'],
+      },
+      {
+        id: 6,
+        name: 'Longline Pocket Tee',
+        price: 36,
+        img: pocketBurgundy,
+        colors: [
+          { hex: '#752531', img: pocketBurgundy, label: 'Burgundy' },
+          { hex: '#3d3c42', img: pocketCharcoal, label: 'Charcoal' },
+          { hex: '#ffffff', img: pocketWhite, label: 'White' },
+        ],
+        sizes: ['S', 'M', 'L', 'XL'],
+      },
     ],
   },
   'hoodies': {
     label: 'Hoodies',
     products: [
-      { id: 1, name: 'Classic Pullover Hoodie', price: 59, img: 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL', 'XXL'] },
-      { id: 2, name: 'Zip-Up Tech Hoodie',      price: 69, img: 'https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?q=80&w=600', colors: null, sizes: ['M', 'L', 'XL'] },
+      {
+        id: 1,
+        name: 'Classic Pullover Hoodie',
+        price: 59,
+        img: hoodieNavy,
+        colors: [
+          { hex: '#1c2d42', img: hoodieNavy, label: 'Navy' },
+          { hex: '#1e1e20', img: hoodieBlack, label: 'Black' },
+          { hex: '#d4c6bc', img: hoodieBeige, label: 'Beige' },
+          { hex: '#c55c8f', img: hoodiePink, label: 'Pink' },
+          { hex: '#2b84b5', img: hoodieBlue, label: 'Blue' },
+          { hex: '#634c41', img: hoodieBrown, label: 'Brown' },
+        ],
+        sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+      },
+      {
+        id: 2,
+        name: 'Zip-Up Tech Hoodie',
+        price: 69,
+        img: techBurgundy,
+        colors: [
+          { hex: '#3c2125', img: techBurgundy, label: 'Burgundy' },
+          { hex: '#37424d', img: techSlate, label: 'Slate Blue' },
+        ],
+        sizes: ['M', 'L', 'XL'],
+      },
     ],
   },
   'jackets': {
@@ -101,10 +192,13 @@ const priceRanges = [
 function ProductCard({ product }) {
   const navigate = useNavigate();
 
-  // if product has color variants, start with the first; otherwise null
-  const [selectedColor, setSelectedColor] = useState(
-    product.colors ? product.colors[0] : null
-  );
+  // if product has color variants, start with the matching color if it exists; otherwise null (e.g. group image)
+  const [selectedColor, setSelectedColor] = useState(() => {
+    if (product.colors) {
+      return product.colors.find(c => c.img === product.img) || null;
+    }
+    return null;
+  });
   const [selectedSize, setSelectedSize] = useState(null);
   const [added, setAdded]               = useState(false);
 
@@ -151,7 +245,7 @@ function ProductCard({ product }) {
         {product.colors && (
           <div className="cp-section">
             <span className="cp-label">
-              {product.colors[0].hex ? 'Color' : 'Design'} — <span className="cp-color-name">{selectedColor?.label}</span>
+              {product.colors[0].hex ? 'Color' : 'Design'} — <span className="cp-color-name">{selectedColor?.label || 'All'}</span>
             </span>
             <div className="cp-colors">
               {product.colors.map((c) => (
