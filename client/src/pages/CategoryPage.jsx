@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { CartDrawer } from '../components/CartDrawer';
 import './CategoryPage.css';
 
 // Classic White Tee
@@ -18,12 +20,50 @@ import og6 from '../assets/Oversized Graphic Tee-6.jpg';
 import og7 from '../assets/Oversized Graphic Tee-7.jpg';
 import og8 from '../assets/Oversized Graphic Tee-8.jpg';
 import og9 from '../assets/Oversized Graphic Tee-9.jpg';
-
 // Crop Top
 import cropAll from '../assets/Crop Tee-all.jpg';
 import cropBlack from '../assets/Crop Tee-1.jpg';
 import cropWhite from '../assets/Crop Tee-2.jpg';
 import cropBrown from '../assets/Crop Tee-3.jpg';
+// Hoodie
+import hoodieImg from '../assets/Hoodie.jpg';
+
+// Jhumkas
+import jhumka1 from '../assets/Jhumka-1.jpg';
+import jhumka2 from '../assets/Jhumka-2.jpg';
+import jhumka3 from '../assets/Jhumka-3.jpg';
+import jhumka4 from '../assets/Jhumka-4.jpg';
+import jhumka5 from '../assets/Jhumka-5.jpg';
+import jhumka6 from '../assets/Jhumka-6.jpg';
+import jhumka61 from '../assets/Jhumka-6.1.jpg';
+import jhumka62 from '../assets/Jhumka-6.2.jpg';
+import jhumka63 from '../assets/Jhumka-6.3.jpg';
+import jhumka7 from '../assets/Jhumka-7.jpg';
+import jhumka8 from '../assets/Jhumka-8.jpg';
+import jhumka9 from '../assets/Jhumka-9.jpg';
+import jhumka10 from '../assets/Jhumka-10.jpg';
+
+// Necklaces
+import n1 from '../assets/N-1.jpg';
+import n2 from '../assets/N-2.jpg';
+import n3 from '../assets/N-3.jpg';
+import n4 from '../assets/N-4.jpg';
+import n5 from '../assets/N-5.jpg';
+
+// Desi Bangles
+import b1 from '../assets/b-1.jpg';
+import b2 from '../assets/b-2.jpg';
+import b3 from '../assets/b-3.jpg';
+import b4 from '../assets/b-4.jpg';
+import b5 from '../assets/b-5.jpg';
+import b6 from '../assets/b-6.jpg';
+
+// Earrings
+import acc1 from '../assets/Accessories-1.jpg';
+import acc2 from '../assets/Accessories-2.jpg';
+import acc3 from '../assets/Accessories-3.jpg';
+import acc4 from '../assets/Accessories-4.jpg';
+import acc5 from '../assets/Accessories-5.jpg';
 
 // Essential Rib Tee
 import ribAsh from '../assets/Rib Tee - ash.jpg';
@@ -58,7 +98,7 @@ const categoryData = {
       {
         id: 1,
         name: 'Classic White Tee',
-        price: 29,
+        price: 3500,
         img: classicWhite,
         colors: [
           { hex: '#ffffff', img: classicWhite, label: 'White' },
@@ -69,7 +109,7 @@ const categoryData = {
       {
         id: 2,
         name: 'Washed Black Tee',
-        price: 34,
+        price: 3800,
         img: washedBlack1,
         colors: [
           { hex: '#1a1a1a', img: washedBlack1, label: 'Black' },
@@ -77,7 +117,7 @@ const categoryData = {
         ],
         sizes: ['S', 'M', 'L', 'XL'],
       },
-      { id: 3, name: 'Oversized Graphic Tee', price: 39, img: og1,
+      { id: 3, name: 'Oversized Graphic Tee', price: 4200, img: og1,
         colors: [
           { img: og1, label: 'Design 1' },
           { img: og2, label: 'Design 2' },
@@ -94,7 +134,7 @@ const categoryData = {
       {
         id: 4,
         name: 'Crop Top',
-        price: 32,
+        price: 3600,
         img: cropAll,
         colors: [
           { hex: '#111111', img: cropBlack, label: 'Black' },
@@ -106,7 +146,7 @@ const categoryData = {
       {
         id: 5,
         name: 'Essential Rib Tee',
-        price: 27,
+        price: 3200,
         img: ribAsh,
         colors: [
           { hex: '#7a7a7a', img: ribAsh, label: 'Ash' },
@@ -121,7 +161,7 @@ const categoryData = {
       {
         id: 6,
         name: 'Longline Pocket Tee',
-        price: 36,
+        price: 3900,
         img: pocketBurgundy,
         colors: [
           { hex: '#752531', img: pocketBurgundy, label: 'Burgundy' },
@@ -138,7 +178,7 @@ const categoryData = {
       {
         id: 1,
         name: 'Classic Pullover Hoodie',
-        price: 59,
+        price: 5500,
         img: hoodieNavy,
         colors: [
           { hex: '#1c2d42', img: hoodieNavy, label: 'Navy' },
@@ -153,7 +193,7 @@ const categoryData = {
       {
         id: 2,
         name: 'Zip-Up Tech Hoodie',
-        price: 69,
+        price: 6000,
         img: techBurgundy,
         colors: [
           { hex: '#3c2125', img: techBurgundy, label: 'Burgundy' },
@@ -166,41 +206,104 @@ const categoryData = {
   'jackets': {
     label: 'Jackets',
     products: [
-      { id: 1, name: 'Field Jacket – Burnt Clay', price: 149, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL'] },
-      { id: 2, name: 'Leather Moto Jacket',       price: 199, img: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL'] },
+      { id: 1, name: 'Field Jacket – Burnt Clay', price: 6000, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL'] },
+      { id: 2, name: 'Leather Moto Jacket',       price: 6000, img: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?q=80&w=600', colors: null, sizes: ['S', 'M', 'L', 'XL'] },
     ],
   },
   'accessories': {
     label: 'Accessories',
     products: [
-      { id: 1, name: 'Merino Beanie',   price: 24, img: 'https://images.unsplash.com/photo-1510639077-A0B83FE4B67E?q=80&w=600', colors: null, sizes: ['One Size'] },
-      { id: 2, name: 'Canvas Tote Bag', price: 19, img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600', colors: null, sizes: ['One Size'], link: '/tote-bags' },
+      {
+        id: 1,
+        name: 'Jhumkas',
+        price: 4500,
+        img: jhumka1,
+        colors: [
+          { img: jhumka1, label: 'Design 1' },
+          { img: jhumka2, label: 'Design 2' },
+          { img: jhumka3, label: 'Design 3' },
+          { img: jhumka4, label: 'Design 4' },
+          { img: jhumka5, label: 'Design 5' },
+          { img: jhumka6, label: 'Design 6' },
+          { img: jhumka7, label: 'Design 7' },
+          { img: jhumka8, label: 'Design 8' },
+          { img: jhumka9, label: 'Design 9' },
+          { img: jhumka10, label: 'Design 10' },
+        ],
+        sizes: ['One Size'],
+      },
+      {
+        id: 2,
+        name: 'Necklaces',
+        price: 5200,
+        img: n1,
+        colors: [
+          { img: n1, label: 'Design 1' },
+          { img: n2, label: 'Design 2' },
+          { img: n3, label: 'Design 3' },
+          { img: n4, label: 'Design 4' },
+          { img: n5, label: 'Design 5' },
+        ],
+        sizes: ['One Size'],
+      },
+      {
+        id: 3,
+        name: 'Desi Bangle',
+        price: 3800,
+        img: b1,
+        colors: [
+          { img: b1, label: 'Design 1' },
+          { img: b2, label: 'Design 2' },
+          { img: b3, label: 'Design 3' },
+          { img: b4, label: 'Design 4' },
+          { img: b5, label: 'Design 5' },
+          { img: b6, label: 'Design 6' },
+        ],
+        sizes: ['One Size'],
+      },
+      {
+        id: 4,
+        name: 'Earrings',
+        price: 4200,
+        img: acc1,
+        colors: [
+          { img: acc1, label: 'Design 1' },
+          { img: acc2, label: 'Design 2' },
+          { img: acc3, label: 'Design 3' },
+          { img: acc4, label: 'Design 4' },
+          { img: acc5, label: 'Design 5' },
+        ],
+        sizes: ['One Size'],
+      },
     ],
   },
 };
 
 /* ── price filter ranges ── */
 const priceRanges = [
-  { label: 'All',        min: 0,   max: Infinity },
-  { label: 'Under $30',  min: 0,   max: 30 },
-  { label: '$30 – $60',  min: 30,  max: 60 },
-  { label: '$60 – $120', min: 60,  max: 120 },
-  { label: 'Over $120',  min: 120, max: Infinity },
+  { label: 'All',               min: 0,    max: Infinity },
+  { label: 'Under LKR 3,500',   min: 0,    max: 3500 },
+  { label: 'LKR 3,500 – 4,500', min: 3500, max: 4500 },
+  { label: 'LKR 4,500 – 5,500', min: 4500, max: 5500 },
+  { label: 'Over LKR 5,500',    min: 5500, max: Infinity },
 ];
 
 /* ── product card ── */
 function ProductCard({ product }) {
   const navigate = useNavigate();
+  const { addToCart, setCartOpen } = useCart();
 
-  // if product has color variants, start with the matching color if it exists; otherwise null (e.g. group image)
-  const [selectedColor, setSelectedColor] = useState(() => {
-    if (product.colors) {
-      return product.colors.find(c => c.img === product.img) || null;
-    }
-    return null;
-  });
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [added, setAdded]               = useState(false);
+  // if product has color variants, start with the first one
+  const [selectedColor, setSelectedColor] = useState(
+    product.colors ? product.colors[0] : null
+  );
+  
+  // auto-select size if only "One Size" exists
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes.length === 1 && product.sizes[0] === 'One Size' ? 'One Size' : null
+  );
+  
+  const [added, setAdded] = useState(false);
 
   // displayed image: color-specific if available, else default
   const displayImg = selectedColor ? selectedColor.img : product.img;
@@ -211,8 +314,19 @@ function ProductCard({ product }) {
 
   function handleAdd() {
     if (!selectedSize) return;
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      img: displayImg,
+      selectedColor,
+      selectedSize,
+    });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
+    setTimeout(() => {
+      setAdded(false);
+      setCartOpen(true); // open cart drawer after brief delay
+    }, 600);
   }
 
   return (
@@ -239,7 +353,7 @@ function ProductCard({ product }) {
         >
           {product.name}
         </h3>
-        <p className="cp-price">${product.price}</p>
+        <p className="cp-price">LKR {product.price.toLocaleString('en-US')}</p>
 
         {/* Color swatches — only shown when product has color variants */}
         {product.colors && (
@@ -276,21 +390,23 @@ function ProductCard({ product }) {
           </div>
         )}
 
-        {/* Size selector */}
-        <div className="cp-section">
-          <span className="cp-label">Size</span>
-          <div className="cp-sizes">
-            {product.sizes.map((s) => (
-              <button
-                key={s}
-                className={`cp-size-btn ${selectedSize === s ? 'active' : ''}`}
-                onClick={() => setSelectedSize(s)}
-              >
-                {s}
-              </button>
-            ))}
+        {/* Size selector — only show if not "One Size" */}
+        {!(product.sizes.length === 1 && product.sizes[0] === 'One Size') && (
+          <div className="cp-section">
+            <span className="cp-label">Size</span>
+            <div className="cp-sizes">
+              {product.sizes.map((s) => (
+                <button
+                  key={s}
+                  className={`cp-size-btn ${selectedSize === s ? 'active' : ''}`}
+                  onClick={() => setSelectedSize(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <button
           className={`cp-add-btn ${added ? 'added' : ''}`}
@@ -332,12 +448,14 @@ function CategoryPage() {
   });
 
   return (
-    <div className="cp-page">
-      <div className="cp-topbar">
-        <button className="cp-back" onClick={() => navigate('/')}>← Back</button>
-        <h1>{data.label}</h1>
-        <span className="cp-count">{filtered.length} items</span>
-      </div>
+    <>
+      <CartDrawer />
+      <div className="cp-page">
+        <div className="cp-topbar">
+          <button className="cp-back" onClick={() => navigate('/')}>← Back</button>
+          <h1>{data.label}</h1>
+          <span className="cp-count">{filtered.length} items</span>
+        </div>
 
       <div className="cp-layout">
         <aside className="cp-sidebar">
@@ -370,6 +488,7 @@ function CategoryPage() {
         </main>
       </div>
     </div>
+    </>
   );
 }
 

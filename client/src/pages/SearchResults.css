@@ -1,0 +1,277 @@
+/* =====================
+   SEARCH RESULTS PAGE
+===================== */
+
+.sr-page {
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  padding: 112px 4% 80px; /* Clear navbar + announcement */
+}
+
+/* ── HEADER ── */
+.sr-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.sr-back {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.sr-back:hover { color: #fff; }
+
+.sr-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── QUERY INFO ── */
+.sr-query-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sr-query-info p {
+  font-size: 1rem;
+  color: #ccc;
+  margin: 0;
+}
+
+.sr-query-info strong {
+  color: #fff;
+}
+
+.sr-count {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* ── EMPTY STATES ── */
+.sr-empty,
+.sr-no-results {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.sr-empty {
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.sr-no-results p {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin: 0 0 12px 0;
+}
+
+.sr-suggestion {
+  font-size: 0.95rem;
+  color: #888;
+}
+
+/* ── RESULTS GRID ── */
+.sr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 40px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── PRODUCT CARD ── */
+.sr-card {
+  background: #0a0a0a;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.sr-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.sr-img-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  position: relative;
+}
+
+.sr-img-fade {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.sr-info {
+  padding: 20px;
+}
+
+.sr-top {
+  margin-bottom: 8px;
+}
+
+.sr-top h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.sr-category {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.sr-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 12px 0 16px 0;
+}
+
+/* ── PRODUCT OPTIONS ── */
+.sr-section {
+  margin-bottom: 16px;
+}
+
+.sr-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.sr-color-name {
+  color: #fff;
+  font-weight: 400;
+  text-transform: none;
+}
+
+.sr-colors {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sr-color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+}
+
+.sr-color-swatch:hover,
+.sr-color-swatch.active {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
+.sr-sizes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sr-size-btn {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: transparent;
+  color: #ccc;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sr-size-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+.sr-size-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+/* ── ADD TO BAG BUTTON ── */
+.sr-add-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.sr-add-btn:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+.sr-add-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sr-add-btn.added {
+  background: #16a34a;
+  color: #fff;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .sr-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 32px 16px;
+  }
+  
+  .sr-query-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .sr-page {
+    padding: 112px 5% 60px;
+  }
+}

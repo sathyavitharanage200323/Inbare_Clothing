@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingBag, X, Menu, ClipboardList, UserCircle } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import './Navbar.css';
 
 function Navbar() {
+  const { setCartOpen, totalItems } = useCart();
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [menuOpen,    setMenuOpen]    = useState(false);
@@ -51,8 +53,9 @@ function Navbar() {
           <button aria-label="Account" onClick={() => setAccountOpen(true)}>
             <User size={20} strokeWidth={1.5} />
           </button>
-          <button aria-label="Bag" className="nb-bag">
+          <button aria-label="Bag" className="nb-bag" onClick={() => setCartOpen(true)}>
             <ShoppingBag size={20} strokeWidth={1.5} />
+            {totalItems > 0 && <span className="nb-bag-count">{totalItems}</span>}
           </button>
           <button className="nb-hamburger" aria-label="Menu" onClick={() => setMenuOpen(true)}>
             <Menu size={22} strokeWidth={1.5} />

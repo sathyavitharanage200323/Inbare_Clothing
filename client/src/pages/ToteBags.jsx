@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingBag, Check } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { CartDrawer } from '../components/CartDrawer';
 import tot1  from '../assets/tot-1.jpg';
 import tot2  from '../assets/tot-2.jpg';
 import tot3  from '../assets/tot-3.jpg';
@@ -14,28 +16,40 @@ import tot10 from '../assets/tot-10.jpg';
 import './ToteBags.css';
 
 const totes = [
-  { id: 1,  name: 'The Natural Tote',      price: 19, img: tot1,  colors: ['#c8a97e','#ffffff','#000000'], sizes: ['One Size'] },
-  { id: 2,  name: 'Washed Canvas Tote',    price: 22, img: tot2,  colors: ['#e8dcc8','#1f2937'],           sizes: ['One Size'] },
-  { id: 3,  name: 'Heritage Carry Bag',    price: 25, img: tot3,  colors: ['#92400e','#000000','#ffffff'], sizes: ['One Size'] },
-  { id: 4,  name: 'Minimal Market Tote',   price: 21, img: tot4,  colors: ['#ffffff','#6b7280','#000000'], sizes: ['One Size'] },
-  { id: 5,  name: 'Linen Everyday Bag',    price: 28, img: tot5,  colors: ['#d4c5a9','#000000'],           sizes: ['One Size'] },
-  { id: 6,  name: 'Studio Tote',           price: 32, img: tot6,  colors: ['#000000','#ffffff','#b45309'], sizes: ['One Size'] },
-  { id: 7,  name: 'Archive Shopper',       price: 27, img: tot7,  colors: ['#9ca3af','#1f2937','#ffffff'], sizes: ['One Size'] },
-  { id: 8,  name: 'Raw Edge Carry-All',    price: 24, img: tot8,  colors: ['#c8a97e','#4b5563'],           sizes: ['One Size'] },
-  { id: 9,  name: 'Atelier Tote',          price: 35, img: tot9,  colors: ['#000000','#f5f0e8'],           sizes: ['One Size'] },
-  { id: 10, name: 'Grand Market Bag',      price: 29, img: tot10, colors: ['#ffffff','#000000','#92400e'], sizes: ['One Size'] },
+  { id: 1,  name: 'The Natural Tote',      price: 1200, img: tot1,  colors: ['#c8a97e','#ffffff','#000000'], sizes: ['One Size'] },
+  { id: 2,  name: 'Washed Canvas Tote',    price: 1400, img: tot2,  colors: ['#e8dcc8','#1f2937'],           sizes: ['One Size'] },
+  { id: 3,  name: 'Heritage Carry Bag',    price: 1600, img: tot3,  colors: ['#92400e','#000000','#ffffff'], sizes: ['One Size'] },
+  { id: 4,  name: 'Minimal Market Tote',   price: 1300, img: tot4,  colors: ['#ffffff','#6b7280','#000000'], sizes: ['One Size'] },
+  { id: 5,  name: 'Linen Everyday Bag',    price: 1800, img: tot5,  colors: ['#d4c5a9','#000000'],           sizes: ['One Size'] },
+  { id: 6,  name: 'Studio Tote',           price: 2000, img: tot6,  colors: ['#000000','#ffffff','#b45309'], sizes: ['One Size'] },
+  { id: 7,  name: 'Archive Shopper',       price: 1700, img: tot7,  colors: ['#9ca3af','#1f2937','#ffffff'], sizes: ['One Size'] },
+  { id: 8,  name: 'Raw Edge Carry-All',    price: 1500, img: tot8,  colors: ['#c8a97e','#4b5563'],           sizes: ['One Size'] },
+  { id: 9,  name: 'Atelier Tote',          price: 1900, img: tot9,  colors: ['#000000','#f5f0e8'],           sizes: ['One Size'] },
+  { id: 10, name: 'Grand Market Bag',      price: 1800, img: tot10, colors: ['#ffffff','#000000','#92400e'], sizes: ['One Size'] },
 ];
 
 /* ── individual card ── */
 function ToteCard({ tote }) {
+  const { addToCart, setCartOpen } = useCart();
   const [color,  setColor]  = useState(tote.colors[0]); // auto-select first color
   const [size,   setSize]   = useState(tote.sizes[0]);   // auto-select first size
   const [added,  setAdded]  = useState(false);
   const [hover,  setHover]  = useState(false);
 
   function handleAdd() {
+    addToCart({
+      id: tote.id,
+      name: tote.name,
+      price: tote.price,
+      img: tote.img,
+      selectedColor: null, // tote bags don't display color in cart
+      selectedSize: size,
+    });
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => {
+      setAdded(false);
+      setCartOpen(true); // open cart drawer
+    }, 600);
   }
 
   return (
@@ -54,7 +68,7 @@ function ToteCard({ tote }) {
       <div className="tb-body">
         <div className="tb-top-row">
           <h3 className="tb-name">{tote.name}</h3>
-          <span className="tb-price">${tote.price}</span>
+          <span className="tb-price">LKR {tote.price.toLocaleString('en-US')}</span>
         </div>
 
         {/* sizes */}
@@ -94,7 +108,9 @@ export default function ToteBags() {
   const navigate = useNavigate();
 
   return (
-    <div className="tb-page">
+    <>
+      <CartDrawer />
+      <div className="tb-page">
       {/* hero banner */}
       <div className="tb-hero">
         <div className="tb-hero-content">
@@ -122,5 +138,6 @@ export default function ToteBags() {
         ))}
       </section>
     </div>
+    </>
   );
 }

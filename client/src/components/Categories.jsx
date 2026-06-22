@@ -1,4 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import hoodieImg from '../assets/Hoodie.jpg';
+import jacketImg from '../assets/jacket.jpg';
+import accessoriesImg from '../assets/Accessories.jpg';
 
 const categories = [
   {
@@ -11,19 +14,19 @@ const categories = [
     id: 2,
     name: "Hoodies",
     slug: "hoodies",
-    img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=800",
+    img: hoodieImg,
   },
   {
     id: 3,
     name: "Jackets",
     slug: "jackets",
-    img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800",
+    img: jacketImg,
   },
   {
     id: 4,
     name: "Accessories",
     slug: "accessories",
-    img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800",
+    img: accessoriesImg,
   },
 ];
 

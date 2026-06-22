@@ -1351,3 +1351,13 @@ a{
   }
 
 }
+
+/* smooth image transition for hover swaps */
+.arrival-img-fade {
+  transition: opacity 0.4s ease;
+}
+
+/* smooth image transition for featured products */
+.product-img-fade {
+  transition: opacity 0.4s ease;
+}

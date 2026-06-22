@@ -1,27 +1,35 @@
+import { useState } from 'react';
+import oversizedBlackTee from '../assets/Oversized Black Tee.jpg';
+import essentialHoodie from '../assets/Essential Hoodie.jpg';
+import streetJacket from '../assets/Street Jacket.jpg';
+import cargoPant1 from '../assets/Premium Cargo Pant.jpg';
+import cargoPant2 from '../assets/Premium Cargo Pant-2.jpg';
+
 const arrivals = [
   {
     id: 1,
     name: "Oversized Black Tee",
     price: "LKR 4,990",
-    img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200",
+    img: oversizedBlackTee,
   },
   {
     id: 2,
     name: "Essential Hoodie",
     price: "LKR 7,490",
-    img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1200",
+    img: essentialHoodie,
   },
   {
     id: 3,
     name: "Street Jacket",
     price: "LKR 9,990",
-    img: "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1200",
+    img: streetJacket,
   },
   {
     id: 4,
     name: "Premium Cargo Pant",
     price: "LKR 6,990",
-    img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200",
+    img: cargoPant1,
+    hoverImg: cargoPant2,
   },
 ];
 
@@ -35,18 +43,33 @@ function NewArrivals() {
 
       <div className="arrival-grid">
         {arrivals.map((item) => (
-          <div className="arrival-card" key={item.id}>
-            <div className="arrival-image">
-              <img src={item.img} alt={item.name} />
-            </div>
-            <div className="arrival-info">
-              <h3>{item.name}</h3>
-              <p>{item.price}</p>
-            </div>
-          </div>
+          <ArrivalCard key={item.id} item={item} />
         ))}
       </div>
     </section>
+  );
+}
+
+function ArrivalCard({ item }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // use hover image if available and hovered, else default
+  const displayImg = (item.hoverImg && isHovered) ? item.hoverImg : item.img;
+
+  return (
+    <div
+      className="arrival-card"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="arrival-image">
+        <img src={displayImg} alt={item.name} className="arrival-img-fade" />
+      </div>
+      <div className="arrival-info">
+        <h3>{item.name}</h3>
+        <p>{item.price}</p>
+      </div>
+    </div>
   );
 }
 

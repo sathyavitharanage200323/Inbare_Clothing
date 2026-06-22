@@ -2,8 +2,10 @@ import "./Home.css";
 
 import AnnouncementBar   from "../components/AnnouncementBar";
 import Navbar            from "../components/Navbar";
+import { CartDrawer }    from "../components/CartDrawer";
 import Hero              from "../components/Hero";
 import Categories        from "../components/Categories";
+import FeaturedToteBag   from "../components/FeaturedToteBag";
 import NewArrivals       from "../components/NewArrivals";
 import FeaturedProducts  from "../components/FeaturedProducts";
 import Lookbook          from "../components/Lookbook";
@@ -19,8 +21,10 @@ function Home() {
     <div className="home">
       <AnnouncementBar />
       <Navbar />
+      <CartDrawer />
       <Hero />
       <Categories />
+      <FeaturedToteBag />
       <NewArrivals />
       <FeaturedProducts />
       <Lookbook />
