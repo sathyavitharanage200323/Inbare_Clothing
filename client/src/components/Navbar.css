@@ -188,8 +188,8 @@
 }
 
 .nb-modal {
-  background: #fff;
-  color: #111;
+  background: #111;
+  color: #fff;
   border-radius: 20px;
   padding: 32px 28px 28px;
   width: 100%;
@@ -210,11 +210,11 @@
 .nb-modal-header h2 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: #111;
+  color: #fff;
 }
 
 .nb-modal-close {
-  background: #f0f0f0;
+  background: #2a2a2a;
   border: none;
   border-radius: 10px;
   width: 38px;
@@ -223,12 +223,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #333;
+  color: #ccc;
   transition: background .2s;
   flex-shrink: 0;
 }
 
-.nb-modal-close:hover { background: #e0e0e0; }
+.nb-modal-close:hover { background: #3a3a3a; }
 
 /* sign in with shop button */
 .nb-shop-btn {
@@ -254,7 +254,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #aaa;
+  color: #666;
   font-size: .8rem;
   letter-spacing: 2px;
 }
@@ -264,7 +264,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #e5e5e5;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* email form */
@@ -277,14 +277,14 @@
 .nb-email-wrap {
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-radius: 12px;
   overflow: hidden;
-  background: #fafafa;
+  background: #2a2a2a;
   transition: border-color .2s;
 }
 
-.nb-email-wrap:focus-within { border-color: #aaa; }
+.nb-email-wrap:focus-within { border-color: #4a90e2; }
 
 .nb-email-wrap input {
   flex: 1;
@@ -292,23 +292,23 @@
   border: none;
   background: transparent;
   font-size: 1rem;
-  color: #111;
+  color: #fff;
   outline: none;
 }
 
-.nb-email-wrap input::placeholder { color: #bbb; }
+.nb-email-wrap input::placeholder { color: #666; }
 
 .nb-email-wrap button {
   background: none;
   border: none;
   padding: 0 18px;
   font-size: 1.2rem;
-  color: #555;
+  color: #888;
   cursor: pointer;
   transition: color .2s;
 }
 
-.nb-email-wrap button:hover { color: #111; }
+.nb-email-wrap button:hover { color: #fff; }
 
 /* newsletter checkbox */
 .nb-newsletter-label {
@@ -316,7 +316,7 @@
   align-items: center;
   gap: 10px;
   font-size: .9rem;
-  color: #444;
+  color: #888;
   cursor: pointer;
 }
 
@@ -341,10 +341,10 @@
   justify-content: center;
   gap: 8px;
   padding: 15px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  background: #fff;
-  color: #222;
+  background: transparent;
+  color: #ccc;
   font-size: .95rem;
   font-weight: 600;
   cursor: pointer;
@@ -352,8 +352,8 @@
 }
 
 .nb-modal-links button:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* bag count badge */

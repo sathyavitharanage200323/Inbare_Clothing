@@ -107,6 +107,14 @@ function Navbar() {
 
             {/* quick links */}
             <div className="nb-modal-links">
+              <button onClick={() => { navigate('/signin');  setAccountOpen(false); }}>
+                <UserCircle size={18} strokeWidth={1.5} />
+                Sign In
+              </button>
+              <button onClick={() => { navigate('/signup');  setAccountOpen(false); }}>
+                <UserCircle size={18} strokeWidth={1.5} />
+                Sign Up
+              </button>
               <button onClick={() => { navigate('/orders');  setAccountOpen(false); }}>
                 <ClipboardList size={18} strokeWidth={1.5} />
                 Orders
