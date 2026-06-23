@@ -4,7 +4,7 @@
 
 .ftb-section {
   padding: 120px 8%;
-  background: #000;
+  background: var(--page-bg);
 }
 
 .ftb-container {
@@ -56,7 +56,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* ── info side ── */
@@ -69,7 +69,7 @@
 .ftb-eyebrow {
   font-size: 0.7rem;
   letter-spacing: 4px;
-  color: #888;
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -77,14 +77,14 @@
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
   line-height: 1.1;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .ftb-price {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -97,33 +97,33 @@
 .ftb-label {
   font-size: 0.7rem;
   letter-spacing: 3px;
-  color: #555;
+  color: var(--text-placeholder);
   text-transform: uppercase;
 }
 
 .ftb-size-btn {
   width: fit-content;
   padding: 10px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   background: transparent;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: default;
 }
 
 .ftb-size-btn.active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: var(--border-subtle);
+  border-color: var(--border-light);
 }
 
 .ftb-add-btn {
   padding: 18px;
   border: none;
   border-radius: 50px;
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -134,17 +134,17 @@
 }
 
 .ftb-add-btn:hover {
-  background: #f0f0f0;
+  background: var(--btn-hover);
   transform: translateY(-2px);
 }
 
 .ftb-add-btn.added {
-  background: #16a34a;
-  color: #fff;
+  background: var(--success);
+  color: var(--text-primary);
 }
 
 .ftb-desc {
-  color: #aaa;
+  color: var(--text-muted);
   line-height: 1.8;
   font-size: 0.95rem;
   max-width: 480px;

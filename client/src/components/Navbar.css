@@ -15,10 +15,10 @@
   justify-content: space-between;
   padding: 0 6%;
 
-  background: rgba(18, 18, 18, 0.72);
+  background: var(--nav-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 /* ── logo ── */
@@ -29,7 +29,7 @@
   font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: 0.25em;
-  color: #fff;
+  color: var(--text-primary);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -44,12 +44,12 @@
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
-.nb-nav a:hover { color: #fff; }
+.nb-nav a:hover { color: var(--text-primary); }
 
 /* ── icon group ── */
 .nb-icons {
@@ -61,7 +61,7 @@
 .nb-icons button {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -70,7 +70,7 @@
   transition: color 0.2s;
 }
 
-.nb-icons button:hover { color: #fff; }
+.nb-icons button:hover { color: var(--text-primary); }
 
 .nb-hamburger { display: none; }
 
@@ -93,41 +93,41 @@
   gap: 16px;
   width: 90%;
   max-width: 620px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 12px;
 }
 
-.nb-search-icon { color: rgba(255,255,255,0.5); flex-shrink: 0; }
+.nb-search-icon { color: var(--text-muted); flex-shrink: 0; }
 
 .nb-search-input {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1.4rem;
   font-family: inherit;
 }
 
-.nb-search-input::placeholder { color: rgba(255,255,255,0.3); }
+.nb-search-input::placeholder { color: var(--text-placeholder); }
 
 .nb-search-form button {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   transition: color .2s;
 }
 
-.nb-search-form button:hover { color: #fff; }
+.nb-search-form button:hover { color: var(--text-primary); }
 
 /* ── mobile drawer ── */
 .nb-drawer-overlay {
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: rgba(0,0,0,0.6);
+  background: var(--overlay);
   backdrop-filter: blur(4px);
 }
 
@@ -137,7 +137,7 @@
   top: 0;
   bottom: 0;
   width: 280px;
-  background: #111;
+  background: var(--card-bg);
   padding: 72px 32px 40px;
   display: flex;
   flex-direction: column;
@@ -150,7 +150,7 @@
   right: 20px;
   background: none;
   border: none;
-  color: rgba(255,255,255,0.7);
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
@@ -158,12 +158,12 @@
   font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.85);
+  color: var(--text-primary);
   text-decoration: none;
   transition: color .2s;
 }
 
-.nb-drawer a:hover { color: #fff; }
+.nb-drawer a:hover { color: var(--text-primary); }
 
 /* ── responsive ── */
 @media (max-width: 860px) {
@@ -179,7 +179,7 @@
   position: fixed;
   inset: 0;
   z-index: 1200;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--overlay);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -188,8 +188,8 @@
 }
 
 .nb-modal {
-  background: #111;
-  color: #fff;
+  background: var(--card-bg);
+  color: var(--text-primary);
   border-radius: 20px;
   padding: 32px 28px 28px;
   width: 100%;
@@ -210,11 +210,11 @@
 .nb-modal-header h2 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .nb-modal-close {
-  background: #2a2a2a;
+  background: var(--input-bg);
   border: none;
   border-radius: 10px;
   width: 38px;
@@ -223,12 +223,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #ccc;
+  color: var(--text-secondary);
   transition: background .2s;
   flex-shrink: 0;
 }
 
-.nb-modal-close:hover { background: #3a3a3a; }
+.nb-modal-close:hover { background: var(--elevated-bg); }
 
 /* sign in with shop button */
 .nb-shop-btn {
@@ -236,8 +236,8 @@
   padding: 17px;
   border: none;
   border-radius: 50px;
-  background: #5c3df4;
-  color: #fff;
+  background: var(--accent-purple);
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -245,7 +245,7 @@
 }
 
 .nb-shop-btn:hover {
-  background: #4a2edb;
+  background: var(--accent-purple-hover);
   transform: translateY(-1px);
 }
 
@@ -254,7 +254,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #666;
+  color: var(--text-placeholder);
   font-size: .8rem;
   letter-spacing: 2px;
 }
@@ -264,7 +264,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-subtle);
 }
 
 /* email form */
@@ -277,14 +277,14 @@
 .nb-email-wrap {
   display: flex;
   align-items: center;
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  background: #2a2a2a;
+  background: var(--input-bg);
   transition: border-color .2s;
 }
 
-.nb-email-wrap:focus-within { border-color: #4a90e2; }
+.nb-email-wrap:focus-within { border-color: var(--accent); }
 
 .nb-email-wrap input {
   flex: 1;
@@ -292,23 +292,23 @@
   border: none;
   background: transparent;
   font-size: 1rem;
-  color: #fff;
+  color: var(--text-primary);
   outline: none;
 }
 
-.nb-email-wrap input::placeholder { color: #666; }
+.nb-email-wrap input::placeholder { color: var(--text-placeholder); }
 
 .nb-email-wrap button {
   background: none;
   border: none;
   padding: 0 18px;
   font-size: 1.2rem;
-  color: #888;
+  color: var(--text-muted);
   cursor: pointer;
   transition: color .2s;
 }
 
-.nb-email-wrap button:hover { color: #fff; }
+.nb-email-wrap button:hover { color: var(--text-primary); }
 
 /* newsletter checkbox */
 .nb-newsletter-label {
@@ -316,7 +316,7 @@
   align-items: center;
   gap: 10px;
   font-size: .9rem;
-  color: #888;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
@@ -341,10 +341,10 @@
   justify-content: center;
   gap: 8px;
   padding: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   background: transparent;
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: .95rem;
   font-weight: 600;
   cursor: pointer;
@@ -352,8 +352,8 @@
 }
 
 .nb-modal-links button:hover {
-  background: #2a2a2a;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  border-color: var(--border-light);
 }
 
 /* bag count badge */
@@ -365,8 +365,8 @@
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-size: 0.65rem;
   font-weight: 700;
   min-width: 16px;

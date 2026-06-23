@@ -3,8 +3,8 @@
 ===================== */
 
 .sr-page {
-  background: #000;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text-primary);
   min-height: 100vh;
   padding: 112px 4% 80px; /* Clear navbar + announcement */
 }
@@ -20,7 +20,7 @@
 .sr-back {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -29,12 +29,12 @@
   transition: color 0.2s;
 }
 
-.sr-back:hover { color: #fff; }
+.sr-back:hover { color: var(--text-primary); }
 
 .sr-header h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -45,7 +45,7 @@
   align-items: center;
   margin-bottom: 32px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .sr-query-info p {
@@ -60,7 +60,7 @@
 
 .sr-count {
   font-size: 0.9rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* ── EMPTY STATES ── */
@@ -71,7 +71,7 @@
 }
 
 .sr-empty {
-  color: #888;
+  color: var(--text-placeholder);
   font-size: 1.1rem;
 }
 
@@ -97,7 +97,7 @@
 
 /* ── PRODUCT CARD ── */
 .sr-card {
-  background: #0a0a0a;
+  background: var(--card-bg);
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -140,7 +140,7 @@
 
 .sr-category {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0;
@@ -149,7 +149,7 @@
 .sr-price {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin: 12px 0 16px 0;
 }
 
@@ -204,10 +204,10 @@
 
 .sr-size-btn {
   padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-light);
   border-radius: 6px;
   background: transparent;
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -215,14 +215,14 @@
 }
 
 .sr-size-btn:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #fff;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .sr-size-btn.active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.6);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
 }
 
 /* ── ADD TO BAG BUTTON ── */
@@ -231,8 +231,8 @@
   padding: 14px;
   border: none;
   border-radius: 8px;
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -247,15 +247,15 @@
 }
 
 .sr-add-btn:disabled {
-  background: #333;
-  color: #666;
+  background: var(--border);
+  color: var(--text-placeholder);
   cursor: not-allowed;
   transform: none;
 }
 
 .sr-add-btn.added {
-  background: #16a34a;
-  color: #fff;
+  background: var(--success);
+  color: var(--text-primary);
 }
 
 /* ── RESPONSIVE ── */

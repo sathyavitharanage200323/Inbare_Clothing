@@ -1,7 +1,7 @@
 .announcement-bar {
   height: 40px;
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   overflow: hidden;
   position: fixed;
   top: 0;

@@ -4,8 +4,8 @@
 
 .cp-page {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   padding: 112px 0 120px; /* clears announcement bar + navbar */
 }
@@ -16,13 +16,13 @@
   align-items: center;
   gap: 20px;
   padding: 32px 8%;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cp-back {
   background: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #ccc;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
   padding: 8px 18px;
   border-radius: 50px;
   cursor: pointer;
@@ -31,8 +31,8 @@
 }
 
 .cp-back:hover {
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
 }
 
 .cp-topbar h1 {
@@ -43,7 +43,7 @@
 
 .cp-count {
   font-size: .85rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* layout */
@@ -65,7 +65,7 @@
 .cp-filter-group h4 {
   font-size: .7rem;
   letter-spacing: 3px;
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 14px;
 }
 
@@ -74,13 +74,13 @@
   align-items: center;
   gap: 10px;
   font-size: .9rem;
-  color: #ccc;
+  color: var(--text-secondary);
   cursor: pointer;
   margin-bottom: 10px;
   transition: color .2s;
 }
 
-.cp-radio:hover { color: #fff; }
+.cp-radio:hover { color: var(--text-primary); }
 
 .cp-radio input {
   accent-color: #fff;
@@ -95,7 +95,7 @@
 }
 
 .cp-empty {
-  color: #666;
+  color: var(--text-placeholder);
   grid-column: 1 / -1;
   padding-top: 60px;
   text-align: center;
@@ -103,7 +103,7 @@
 
 /* ── product card ── */
 .cp-card {
-  background: #111;
+  background: var(--card-bg);
   border-radius: 20px;
   overflow: hidden;
   display: flex;
@@ -136,7 +136,7 @@
 .cp-price {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .cp-section { display: flex; flex-direction: column; gap: 8px; }
@@ -161,7 +161,7 @@
 }
 
 .cp-color-swatch.active {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--text-primary);
   outline-offset: 2px;
 }
 
@@ -170,21 +170,21 @@
 
 .cp-size-btn {
   padding: 5px 12px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid var(--border-light);
   background: transparent;
-  color: #ccc;
+  color: var(--text-secondary);
   border-radius: 6px;
   font-size: .8rem;
   cursor: pointer;
   transition: .2s;
 }
 
-.cp-size-btn:hover { border-color: #fff; color: #fff; }
+.cp-size-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
 
 .cp-size-btn.active {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
 }
 
 /* add to bag button */
@@ -193,8 +193,8 @@
   padding: 13px;
   border: none;
   border-radius: 50px;
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-weight: 700;
   font-size: .9rem;
   cursor: pointer;
@@ -202,16 +202,16 @@
 }
 
 .cp-add-btn:disabled {
-  background: #2a2a2a;
-  color: #555;
+  background: var(--input-bg);
+  color: var(--text-placeholder);
   cursor: not-allowed;
 }
 
 .cp-add-btn:not(:disabled):hover { transform: translateY(-2px); }
 
 .cp-add-btn.added {
-  background: #16a34a;
-  color: #fff;
+  background: var(--success);
+  color: var(--text-primary);
 }
 
 /* not found */

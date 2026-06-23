@@ -4,8 +4,8 @@
 
 .tb-page {
   min-height: 100vh;
-  background: #080808;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   padding-bottom: 140px;
 }
@@ -26,7 +26,7 @@
 .tb-eyebrow {
   font-size: 0.7rem;
   letter-spacing: 5px;
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -41,7 +41,7 @@
 
 .tb-hero-sub {
   max-width: 520px;
-  color: #aaa;
+  color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.75;
 }
@@ -52,7 +52,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 28px 8%;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .tb-back {
@@ -60,8 +60,8 @@
   align-items: center;
   gap: 8px;
   background: none;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #ccc;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   padding: 9px 20px;
   border-radius: 50px;
   font-size: 0.85rem;
@@ -70,14 +70,14 @@
 }
 
 .tb-back:hover {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
+  background: var(--border-subtle);
+  color: var(--text-primary);
 }
 
 .tb-total {
   font-size: 0.8rem;
   letter-spacing: 3px;
-  color: #555;
+  color: var(--text-placeholder);
   text-transform: uppercase;
 }
 
@@ -91,7 +91,7 @@
 
 /* ── card ── */
 .tb-card {
-  background: #0f0f0f;
+  background: var(--card-bg);
   border-radius: 18px;
   overflow: hidden;
   display: flex;
@@ -112,7 +112,7 @@
 .tb-img-wrap {
   position: relative;
   overflow: hidden;
-  background: #1a1a1a;
+  background: var(--elevated-bg);
 }
 
 .tb-img {
@@ -154,13 +154,13 @@
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.3;
-  color: #f0f0f0;
+  color: var(--text-primary);
 }
 
 .tb-price {
   font-size: 1rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -173,7 +173,7 @@
 .tb-label {
   font-size: 0.65rem;
   letter-spacing: 3px;
-  color: #555;
+  color: var(--text-placeholder);
   text-transform: uppercase;
   margin: 0;
 }
@@ -189,7 +189,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.1);
+  border: 1.5px solid var(--border-subtle);
   cursor: pointer;
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -197,7 +197,7 @@
 }
 
 .tb-swatch.active {
-  outline: 2px solid rgba(255,255,255,0.8);
+  outline: 2px solid var(--text-primary);
   border-color: transparent;
 }
 
@@ -206,10 +206,10 @@
 
 .tb-size {
   padding: 5px 14px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--border-subtle);
   border-radius: 6px;
   background: transparent;
-  color: #aaa;
+  color: var(--text-muted);
   font-size: 0.75rem;
   letter-spacing: 0.5px;
   cursor: pointer;
@@ -217,14 +217,14 @@
 }
 
 .tb-size:hover {
-  border-color: rgba(255,255,255,0.4);
-  color: #fff;
+  border-color: var(--border-light);
+  color: var(--text-primary);
 }
 
 .tb-size.active {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
   font-weight: 700;
 }
 
@@ -239,7 +239,7 @@
   border: none;
   border-radius: 50px;
   background: rgba(255,255,255,0.12);
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -248,14 +248,14 @@
 }
 
 .tb-add:hover {
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   transform: translateY(-2px);
 }
 
 .tb-add.added {
-  background: #16a34a !important;
-  color: #fff !important;
+  background: var(--success) !important;
+  color: var(--text-primary) !important;
   transform: none;
 }
 

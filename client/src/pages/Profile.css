@@ -1,6 +1,6 @@
 .profile-page {
   min-height: 100vh;
-  background: #050505;
+  background: var(--page-bg);
   padding: 120px 6% 80px;
   max-width: 800px;
   margin: 0 auto;
@@ -8,8 +8,8 @@
 
 .profile-back {
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ccc;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
   padding: 8px 18px;
   border-radius: 50px;
   cursor: pointer;
@@ -22,12 +22,12 @@
 }
 
 .profile-back:hover {
-  background: #fff;
-  color: #000;
+  background: var(--btn-bg);
+  color: var(--btn-text);
 }
 
 .profile-card {
-  background: #111;
+  background: var(--card-bg);
   border-radius: 20px;
   padding: 48px 40px;
   text-align: center;
@@ -38,28 +38,28 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #2a2a2a;
+  background: var(--input-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  color: #888;
+  color: var(--text-muted);
 }
 
 .profile-name {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 6px;
 }
 
 .profile-email {
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
 .profile-section {
-  background: #111;
+  background: var(--card-bg);
   border-radius: 20px;
   padding: 36px 40px;
   margin-bottom: 24px;
@@ -68,7 +68,7 @@
 .profile-section-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 24px;
   letter-spacing: 0.5px;
 }
@@ -83,7 +83,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #888;
+  color: var(--text-muted);
 }
 
 .profile-detail-item div {
@@ -94,14 +94,14 @@
 
 .profile-detail-label {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--text-placeholder);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .profile-detail-value {
   font-size: 0.95rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .profile-links {
@@ -116,10 +116,10 @@
   justify-content: center;
   gap: 10px;
   padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   background: transparent;
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -128,8 +128,8 @@
 }
 
 .profile-link-btn:hover {
-  background: #2a2a2a;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--input-bg);
+  border-color: var(--border-light);
 }
 
 .profile-link-danger {

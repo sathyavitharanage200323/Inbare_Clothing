@@ -1,3 +1,28 @@
+:root {
+  --page-bg: #050505;
+  --card-bg: #111;
+  --card-bg-alt: #121212;
+  --elevated-bg: #1a1a1a;
+  --input-bg: #2a2a2a;
+  --text-primary: #fff;
+  --text-secondary: #ccc;
+  --text-muted: #888;
+  --text-placeholder: #666;
+  --border: #333;
+  --border-subtle: rgba(255,255,255,0.1);
+  --border-light: rgba(255,255,255,0.2);
+  --btn-bg: #fff;
+  --btn-text: #000;
+  --btn-hover: #e0e0e0;
+  --accent: #4a90e2;
+  --accent-purple: #5c3df4;
+  --accent-purple-hover: #4a2edb;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --nav-bg: rgba(18,18,18,0.72);
+  --overlay: rgba(0,0,0,0.55);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,8 +30,8 @@
 }
 
 body {
-  background: #050505;
-  color: white;
+  background: var(--page-bg);
+  color: var(--text-primary);
   font-family: Inter, sans-serif;
 }
 
@@ -57,7 +82,7 @@ body {
 
 .hero-content p {
   margin-top: 20px;
-  color: #bdbdbd;
+  color: var(--text-muted);
 }
 
 .hero-content button {
@@ -79,7 +104,7 @@ body {
 }
 
 .card {
-  background: #121212;
+  background: var(--card-bg-alt);
   padding: 40px;
   border-radius: 20px;
 }
@@ -91,13 +116,13 @@ body {
 
 .scroll-to-top {
   position: fixed;
-  bottom: 40px;
+  bottom: 100px;
   right: 40px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #ffffff;
-  color: #050505;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   border: none;
   cursor: pointer;
   display: flex;
@@ -106,7 +131,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
-  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s, background 0.3s, color 0.3s;
   z-index: 999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -118,5 +143,5 @@ body {
 }
 
 .scroll-to-top:hover {
-  background: #e0e0e0;
+  background: var(--btn-hover);
 }
