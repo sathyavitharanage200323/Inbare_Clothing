@@ -1,0 +1,276 @@
+/* ================================================
+   TOTE BAGS PAGE  —  luxury dark UI
+================================================ */
+
+.tb-page {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 140px;
+}
+
+/* ── hero banner ── */
+.tb-hero {
+  position: relative;
+  height: 340px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 8% 56px;
+  background:
+    linear-gradient(to bottom, rgba(8,8,8,0) 0%, rgba(8,8,8,0.92) 100%),
+    url('https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1600') center/cover no-repeat;
+  margin-top: 112px; /* clears announcement + navbar */
+}
+
+.tb-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 5px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.tb-hero-title {
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.tb-hero-sub {
+  max-width: 520px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+/* ── back / count bar ── */
+.tb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 8%;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tb-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 9px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tb-back:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.tb-total {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--text-placeholder);
+  text-transform: uppercase;
+}
+
+/* ── product grid ── */
+.tb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 32px 8% 0;
+}
+
+/* ── card ── */
+.tb-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.25,0.8,0.25,1),
+              box-shadow 0.4s;
+  cursor: default;
+  margin: 8px;
+}
+
+.tb-card.hovered {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 32px 64px rgba(0,0,0,0.7);
+  z-index: 2;
+}
+
+/* image */
+.tb-img-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--elevated-bg);
+}
+
+.tb-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25,0.8,0.25,1);
+}
+
+.tb-card.hovered .tb-img {
+  transform: scale(1.06);
+}
+
+.tb-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15,15,15,0.7) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* body */
+.tb-body {
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.tb-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.tb-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.tb-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.tb-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tb-label {
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--text-placeholder);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* color swatches */
+.tb-swatches {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.tb-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-subtle);
+  cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline 0.15s, border-color 0.15s;
+}
+
+.tb-swatch.active {
+  outline: 2px solid var(--text-primary);
+  border-color: transparent;
+}
+
+/* size buttons */
+.tb-sizes { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.tb-size {
+  padding: 5px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.tb-size:hover {
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.tb-size.active {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
+  font-weight: 700;
+}
+
+/* add to bag */
+.tb-add {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: none;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.12);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, transform 0.2s;
+}
+
+.tb-add:hover {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  transform: translateY(-2px);
+}
+
+.tb-add.added {
+  background: var(--success) !important;
+  color: var(--text-primary) !important;
+  transform: none;
+}
+
+/* ── responsive ── */
+@media (max-width: 1280px) {
+  .tb-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .tb-grid { grid-template-columns: repeat(2, 1fr); }
+  .tb-hero { height: 260px; margin-top: 112px; }
+}
+
+@media (max-width: 560px) {
+  .tb-grid { grid-template-columns: 1fr; padding: 24px 5% 0; }
+  .tb-hero { padding: 0 5% 40px; }
+  .tb-bar  { padding: 20px 5%; }
+}
