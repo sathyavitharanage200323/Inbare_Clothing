@@ -1,18 +1,32 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import './Auth.css'
 
 function SignUp() {
   const navigate = useNavigate()
-  const [name, setName] = useState('')
+  const { register } = useAuth()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPwd, setShowPwd] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    console.log('sign up:', name, email, password)
+    setError('')
+    setLoading(true)
+    try {
+      await register(firstName, lastName, email, password)
+      navigate('/')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -25,17 +39,34 @@ function SignUp() {
         <h1 className="auth-title">Create Account</h1>
         <p className="auth-subtitle">Join the INBARE community</p>
 
+        {error && <p className="auth-error">{error}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="auth-field">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="firstName">First Name</label>
             <div className="auth-input-wrap">
               <User size={18} className="auth-input-icon" />
               <input
-                id="name"
+                id="firstName"
                 type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="auth-field">
+            <label htmlFor="lastName">Last Name</label>
+            <div className="auth-input-wrap">
+              <User size={18} className="auth-input-icon" />
+              <input
+                id="lastName"
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
             </div>
@@ -67,6 +98,7 @@ function SignUp() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
               <button
                 type="button"
@@ -79,12 +111,10 @@ function SignUp() {
             </div>
           </div>
 
-          <button type="submit" className="auth-btn">Create Account</button>
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create Account'}
+          </button>
         </form>
-
-        <div className="auth-divider"><span>OR</span></div>
-
-        <button className="auth-shop-btn">Sign up with Shop</button>
 
         <p className="auth-footer">
           Already have an account? <Link to="/signin">Sign In</Link>

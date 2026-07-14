@@ -1,16 +1,33 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, User, Mail, Phone, MapPin, Package, ClipboardList, CreditCard, LogOut } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import './Profile.css'
 
 function Profile() {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
-  const user = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main St, New York, NY 10001',
+  if (!user) {
+    return (
+      <div className="profile-page">
+        <button className="profile-back" onClick={() => navigate(-1)}>
+          <ArrowLeft size={18} /> Back
+        </button>
+        <div className="profile-card">
+          <p>You are not signed in. <a href="/signin">Sign In</a></p>
+        </div>
+      </div>
+    )
   }
+
+  async function handleLogout() {
+    await logout()
+    navigate('/')
+  }
+
+  const address = user.address
+    ? [user.address.street, user.address.city, user.address.state, user.address.country].filter(Boolean).join(', ')
+    : 'No address set'
 
   return (
     <div className="profile-page">
@@ -22,7 +39,7 @@ function Profile() {
         <div className="profile-avatar">
           <User size={36} />
         </div>
-        <h1 className="profile-name">{user.name}</h1>
+        <h1 className="profile-name">{user.firstName} {user.lastName}</h1>
         <p className="profile-email">{user.email}</p>
       </div>
 
@@ -40,14 +57,14 @@ function Profile() {
             <Phone size={18} />
             <div>
               <span className="profile-detail-label">Phone</span>
-              <span className="profile-detail-value">{user.phone}</span>
+              <span className="profile-detail-value">{user.phone || 'Not set'}</span>
             </div>
           </div>
           <div className="profile-detail-item">
             <MapPin size={18} />
             <div>
               <span className="profile-detail-label">Address</span>
-              <span className="profile-detail-value">{user.address}</span>
+              <span className="profile-detail-value">{address}</span>
             </div>
           </div>
         </div>
@@ -68,7 +85,7 @@ function Profile() {
             <CreditCard size={20} />
             Payment Methods
           </button>
-          <button className="profile-link-btn profile-link-danger">
+          <button className="profile-link-btn profile-link-danger" onClick={handleLogout}>
             <LogOut size={20} />
             Sign Out
           </button>

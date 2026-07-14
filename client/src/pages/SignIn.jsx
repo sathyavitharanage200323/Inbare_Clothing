@@ -1,17 +1,30 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import './Auth.css'
 
 function SignIn() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPwd, setShowPwd] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    console.log('sign in:', email, password)
+    setError('')
+    setLoading(true)
+    try {
+      await login(email, password)
+      navigate('/')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -23,6 +36,8 @@ function SignIn() {
       <div className="auth-card">
         <h1 className="auth-title">Welcome Back</h1>
         <p className="auth-subtitle">Sign in to your INBARE account</p>
+
+        {error && <p className="auth-error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="auth-field">
@@ -63,12 +78,10 @@ function SignIn() {
             </div>
           </div>
 
-          <button type="submit" className="auth-btn">Sign In</button>
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
         </form>
-
-        <div className="auth-divider"><span>OR</span></div>
-
-        <button className="auth-shop-btn">Sign in with Shop</button>
 
         <p className="auth-footer">
           Don't have an account? <Link to="/signup">Sign Up</Link>
