@@ -1,52 +1,68 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Lock, Info } from 'lucide-react';
+import { ArrowLeft, Lock, Info } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import './Checkout.css';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { items, subtotal } = useCart();
-  
-  // Form state
-  const [email, setEmail] = useState('');
-  const [emailOffers, setEmailOffers] = useState(false);
-  const [country, setCountry] = useState('Sri Lanka');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
-  const [apartment, setApartment] = useState('');
-  const [city, setCity] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [phone, setPhone] = useState('');
-  const [saveInfo, setSaveInfo] = useState(false);
-  const [textOffers, setTextOffers] = useState(false);
-  const [shippingMethod, setShippingMethod] = useState('standard');
-  const [discountCode, setDiscountCode] = useState('');
-  
-  // Payment state
-  const [paymentMethod, setPaymentMethod] = useState('credit-card');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [securityCode, setSecurityCode] = useState('');
-  const [nameOnCard, setNameOnCard] = useState('');
-  const [useSameAddress, setUseSameAddress] = useState(true);
+  const { items, subtotal, clearCart } = useCart();
+  const { user } = useAuth();
+
+  const [email, setEmail] = useState(user?.email || '');
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [address, setAddress] = useState(user?.address?.street || '');
+  const [city, setCity] = useState(user?.address?.city || '');
+  const [state, setState] = useState(user?.address?.state || '');
+  const [zipCode, setZipCode] = useState(user?.address?.zipCode || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [country, setCountry] = useState(user?.address?.country || 'Sri Lanka');
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [note, setNote] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const shippingCost = 399;
   const total = subtotal + shippingCost;
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // Handle payment processing here
-    alert('Order placed successfully!');
-  };
+    setError('');
+
+    if (!user) {
+      setError('Please sign in to place an order.');
+      return;
+    }
+
+    if (items.length === 0) {
+      setError('Your cart is empty.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post('/orders', {
+        shippingAddress: { street: address, city, state, zipCode, country },
+        paymentMethod,
+        note,
+      });
+      await clearCart();
+      alert('Order placed successfully!');
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="checkout-page">
       <div className="checkout-container">
-        {/* Left side - Forms */}
         <div className="checkout-left">
-          {/* Header */}
           <div className="checkout-header">
             <button onClick={() => navigate(-1)} className="checkout-back">
               <ArrowLeft size={18} />
@@ -55,21 +71,18 @@ export default function Checkout() {
             <h1>Checkout</h1>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Express checkout */}
-            <div className="checkout-section">
-              <h2>Express checkout</h2>
-              <button type="button" className="gpay-btn">
-                <span className="gpay-logo">G</span> Pay
-              </button>
-              <div className="checkout-divider">OR</div>
-            </div>
+          {error && <p className="auth-error">{error}</p>}
 
-            {/* Contact */}
+          {!user && (
+            <div className="checkout-section" style={{ background: '#fff3cd', padding: '12px', borderRadius: '8px' }}>
+              <p>Please <a href="/signin">sign in</a> to complete your order.</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
             <div className="checkout-section">
               <div className="section-header">
                 <h2>Contact</h2>
-                <button type="button" className="sign-in-link">Sign in</button>
               </div>
               <input
                 type="email"
@@ -78,20 +91,11 @@ export default function Checkout() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={emailOffers}
-                  onChange={(e) => setEmailOffers(e.target.checked)}
-                />
-                Email me with news and offers
-              </label>
             </div>
 
-            {/* Delivery */}
             <div className="checkout-section">
               <h2>Delivery</h2>
-              
+
               <select value={country} onChange={(e) => setCountry(e.target.value)}>
                 <option value="Sri Lanka">Sri Lanka</option>
                 <option value="India">India</option>
@@ -123,13 +127,6 @@ export default function Checkout() {
                 required
               />
 
-              <input
-                type="text"
-                placeholder="Apartment, suite, etc. (optional)"
-                value={apartment}
-                onChange={(e) => setApartment(e.target.value)}
-              />
-
               <div className="city-postal-row">
                 <input
                   type="text"
@@ -141,10 +138,17 @@ export default function Checkout() {
                 <input
                   type="text"
                   placeholder="Postal code (optional)"
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
                 />
               </div>
+
+              <input
+                type="text"
+                placeholder="State / Province"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
 
               <div className="phone-input">
                 <input
@@ -156,38 +160,13 @@ export default function Checkout() {
                 />
                 <Info size={16} className="phone-info" />
               </div>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={saveInfo}
-                  onChange={(e) => setSaveInfo(e.target.checked)}
-                />
-                Save this information for next time
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={textOffers}
-                  onChange={(e) => setTextOffers(e.target.checked)}
-                />
-                Text me with news and offers
-              </label>
             </div>
 
-            {/* Shipping method */}
             <div className="checkout-section">
               <h2>Shipping method</h2>
               <div className="shipping-option">
                 <label className="radio-label">
-                  <input
-                    type="radio"
-                    name="shipping"
-                    value="standard"
-                    checked={shippingMethod === 'standard'}
-                    onChange={(e) => setShippingMethod(e.target.value)}
-                  />
+                  <input type="radio" name="shipping" value="standard" checked readOnly />
                   <div className="shipping-details">
                     <div>
                       <span className="shipping-name">Standard</span>
@@ -199,95 +178,20 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Payment */}
             <div className="checkout-section">
               <h2>Payment</h2>
               <p className="payment-security">All transactions are secure and encrypted.</p>
 
-              {/* Credit Card */}
               <div className="payment-method">
                 <label className="payment-method-header">
                   <input
                     type="radio"
                     name="payment"
-                    value="credit-card"
-                    checked={paymentMethod === 'credit-card'}
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
-                  <span>Credit card</span>
-                  <div className="card-logos">
-                    <span className="card-logo visa">VISA</span>
-                    <span className="card-logo mastercard">MC</span>
-                    <span className="card-logo amex">AMEX</span>
-                    <span className="card-more">+4</span>
-                  </div>
-                </label>
-                
-                {paymentMethod === 'credit-card' && (
-                  <div className="credit-card-form">
-                    <div className="card-number-input">
-                      <input
-                        type="text"
-                        placeholder="Card number"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        required
-                      />
-                      <Lock size={16} className="lock-icon" />
-                    </div>
-                    
-                    <div className="card-details-row">
-                      <input
-                        type="text"
-                        placeholder="Expiration date (MM / YY)"
-                        value={expiryDate}
-                        onChange={(e) => setExpiryDate(e.target.value)}
-                        required
-                      />
-                      <div className="security-code-input">
-                        <input
-                          type="text"
-                          placeholder="Security code"
-                          value={securityCode}
-                          onChange={(e) => setSecurityCode(e.target.value)}
-                          required
-                        />
-                        <Info size={16} className="security-info" />
-                      </div>
-                    </div>
-                    
-                    <input
-                      type="text"
-                      placeholder="Name on card"
-                      value={nameOnCard}
-                      onChange={(e) => setNameOnCard(e.target.value)}
-                      required
-                    />
-                    
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={useSameAddress}
-                        onChange={(e) => setUseSameAddress(e.target.checked)}
-                      />
-                      Use shipping address as billing address
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {/* Other payment methods */}
-              <div className="payment-method">
-                <label className="payment-method-header">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="onepay"
-                    checked={paymentMethod === 'onepay'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  />
-                  <span>Credit / Debit Card Payments (onepay)</span>
-                  <span className="card-logo amex-blue">AMEX</span>
+                  <span>Cash on Delivery</span>
                 </label>
               </div>
 
@@ -296,15 +200,11 @@ export default function Checkout() {
                   <input
                     type="radio"
                     name="payment"
-                    value="koko"
-                    checked={paymentMethod === 'koko'}
+                    value="card"
+                    checked={paymentMethod === 'card'}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
-                  <span>Koko: Buy Now Pay Later</span>
-                  <div className="card-logos">
-                    <span className="card-logo visa">VISA</span>
-                    <span className="card-logo mastercard">MC</span>
-                  </div>
+                  <span>Credit / Debit Card</span>
                 </label>
               </div>
 
@@ -313,70 +213,55 @@ export default function Checkout() {
                   <input
                     type="radio"
                     name="payment"
-                    value="mintpay"
-                    checked={paymentMethod === 'mintpay'}
+                    value="bank_transfer"
+                    checked={paymentMethod === 'bank_transfer'}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
-                  <span>Mintpay | Shop now. Pay later.</span>
-                  <div className="card-logos">
-                    <span className="card-logo visa">VISA</span>
-                    <span className="card-logo mastercard">MC</span>
-                  </div>
+                  <span>Bank Transfer</span>
                 </label>
               </div>
             </div>
 
-            {/* Pay Now Button */}
-            <button type="submit" className="pay-now-btn">
-              Pay now
+            <div className="checkout-section">
+              <h2>Order Note (optional)</h2>
+              <textarea
+                placeholder="Special instructions for your order..."
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', minHeight: '80px' }}
+              />
+            </div>
+
+            <button type="submit" className="pay-now-btn" disabled={loading || !user}>
+              {loading ? 'Placing Order...' : `Pay now — LKR ${total.toLocaleString('en-US')}`}
             </button>
           </form>
-
-          {/* Footer links */}
-          <div className="checkout-footer">
-            <a href="/refund-policy">Refund policy</a>
-            <a href="/shipping">Shipping</a>
-            <a href="/terms">Terms of service</a>
-            <a href="/contact">Contact</a>
-          </div>
         </div>
 
-        {/* Right side - Order Summary */}
         <div className="checkout-right">
-          {/* Order items */}
           <div className="order-items">
-            {items.map((item, idx) => (
-              <div key={idx} className="order-item">
-                <div className="item-image-wrap">
-                  <img src={item.img} alt={item.name} />
-                  <span className="item-qty">{item.qty}</span>
+            {items.map((item, idx) => {
+              const img = item.img || item.image || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600';
+              const itemQty = item.qty || item.quantity || 1;
+              return (
+                <div key={idx} className="order-item">
+                  <div className="item-image-wrap">
+                    <img src={img} alt={item.name} />
+                    <span className="item-qty">{itemQty}</span>
+                  </div>
+                  <div className="item-details">
+                    <h3>{item.name}</h3>
+                    {item.selectedColor && <p>Color: {typeof item.selectedColor === 'object' ? item.selectedColor.label : item.selectedColor}</p>}
+                    {item.selectedSize && item.selectedSize !== 'One Size' && (
+                      <p>Size: {item.selectedSize}</p>
+                    )}
+                  </div>
+                  <span className="item-price">LKR {((item.price || 0) * itemQty).toLocaleString('en-US')}</span>
                 </div>
-                <div className="item-details">
-                  <h3>{item.name}</h3>
-                  {item.selectedColor && <p>Color: {item.selectedColor.label}</p>}
-                  {item.selectedSize && item.selectedSize !== 'One Size' && (
-                    <p>Size: {item.selectedSize}</p>
-                  )}
-                </div>
-                <span className="item-price">LKR {(item.price * item.qty).toLocaleString('en-US')}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Discount code */}
-          <div className="discount-section">
-            <div className="discount-input-wrap">
-              <input
-                type="text"
-                placeholder="Discount code or gift card"
-                value={discountCode}
-                onChange={(e) => setDiscountCode(e.target.value)}
-              />
-              <button type="button">Apply</button>
-            </div>
-          </div>
-
-          {/* Order totals */}
           <div className="order-totals">
             <div className="total-row">
               <span>Subtotal</span>
