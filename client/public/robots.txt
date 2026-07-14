@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /checkout
+Disallow: /signin
+Disallow: /signup
+Disallow: /profile
+
+Sitemap: https://inbare.com/sitemap.xml

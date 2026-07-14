@@ -1,0 +1,234 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #0a0a0a;
+}
+
+/* ── Sidebar ── */
+.admin-sidebar {
+    width: 260px;
+    background: #111;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transition: width 0.2s ease;
+    overflow-y: auto;
+}
+
+.admin-sidebar.collapsed {
+    width: 72px;
+}
+
+.admin-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    border-bottom: 1px solid #222;
+}
+
+.admin-logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #fff;
+    flex: 1;
+}
+
+.admin-badge {
+    background: #4a90e2;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-collapse-btn {
+    background: none;
+    border: 1px solid #333;
+    color: #888;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.admin-collapse-btn:hover {
+    background: #222;
+    color: #fff;
+}
+
+/* ── Nav ── */
+.admin-nav {
+    flex: 1;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #888;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    font-family: Inter, sans-serif;
+}
+
+.admin-nav-item:hover {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.admin-nav-item.active {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.admin-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 3px;
+    height: 24px;
+    background: #4a90e2;
+    border-radius: 0 3px 3px 0;
+}
+
+.admin-nav-item.logout {
+    color: #ef4444;
+}
+
+.admin-nav-item.logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* ── Sidebar footer ── */
+.admin-sidebar-footer {
+    padding: 8px;
+    border-top: 1px solid #222;
+}
+
+/* ── Main area ── */
+.admin-main {
+    flex: 1;
+    margin-left: 260px;
+    transition: margin-left 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-main.sidebar-collapsed {
+    margin-left: 72px;
+}
+
+/* ── Topbar ── */
+.admin-topbar {
+    height: 64px;
+    background: #111;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.admin-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.admin-user-name {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.admin-user-role {
+    color: #666;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ── Content ── */
+.admin-content {
+    flex: 1;
+    padding: 24px;
+}
+
+/* ── Responsive ── */
+.mobile-only { display: none; }
+.desktop-only { display: flex; }
+
+.admin-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-only { display: flex; }
+    .desktop-only { display: none; }
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .admin-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 99;
+    }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .admin-main.sidebar-collapsed {
+        margin-left: 0;
+    }
+
+    .admin-content {
+        padding: 16px;
+    }
+}

@@ -11,9 +11,14 @@ export const getProducts = async (req, res, next) => {
             search,
             featured,
             sort = "-createdAt",
+            all = "false",
         } = req.query;
 
-        const query = { isActive: true };
+        const query = {};
+
+        if (all !== "true") {
+            query.isActive = true;
+        }
 
         if (category) query.category = category;
         if (featured === "true") query.isFeatured = true;
@@ -94,7 +99,8 @@ export const getProductBySlug = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
     try {
-        const product = await Product.create(req.body);
+        const { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive } = req.body;
+        const product = await Product.create({ name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive });
 
         res.status(201).json({
             success: true,
@@ -117,9 +123,10 @@ export const updateProduct = async (req, res, next) => {
             });
         }
 
+        const { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive } = req.body;
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive },
             { new: true, runValidators: true }
         );
 

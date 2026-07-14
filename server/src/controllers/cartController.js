@@ -118,6 +118,14 @@ export const updateCartItem = async (req, res, next) => {
             });
         }
 
+        const product = await Product.findById(productId);
+        if (product && product.stock < quantity) {
+            return res.status(400).json({
+                success: false,
+                message: `Insufficient stock. Only ${product.stock} available.`,
+            });
+        }
+
         cart.items[itemIndex].quantity = quantity;
         await cart.save();
 

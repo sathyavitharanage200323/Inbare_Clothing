@@ -3,6 +3,18 @@ import api from '../services/api';
 
 const CartContext = createContext();
 
+function normalizeServerItem(item) {
+    return {
+        productId: item.product?._id || item.product,
+        name: item.product?.name || item.name,
+        price: item.price,
+        img: item.product?.images?.[0] || item.image || '',
+        selectedColor: item.color || '',
+        selectedSize: item.size || '',
+        qty: item.quantity,
+    };
+}
+
 export function CartProvider({ children }) {
     const [cartOpen, setCartOpen] = useState(false);
     const [items, setItems] = useState([]);
@@ -17,7 +29,8 @@ export function CartProvider({ children }) {
         }
         try {
             const res = await api.get('/cart');
-            setItems(res.data.cart.items || []);
+            const raw = res.data.cart.items || [];
+            setItems(raw.map(normalizeServerItem));
         } catch {
             setItems([]);
         }
@@ -59,7 +72,7 @@ export function CartProvider({ children }) {
                 size: product.selectedSize || '',
                 color: typeof product.selectedColor === 'object' ? (product.selectedColor?.label || '') : (product.selectedColor || ''),
             });
-            setItems(res.data.cart.items);
+            setItems((res.data.cart.items || []).map(normalizeServerItem));
         } catch (err) {
             console.error('Add to cart failed:', err);
         } finally {
@@ -79,7 +92,7 @@ export function CartProvider({ children }) {
             const color = typeof selectedColor === 'object' ? (selectedColor?.label || '') : (selectedColor || '');
             const size = selectedSize || '';
             const res = await api.delete(`/cart/item/${encodeURIComponent(productId)}/${encodeURIComponent(size)}/${encodeURIComponent(color)}`);
-            setItems(res.data.cart.items);
+            setItems((res.data.cart.items || []).map(normalizeServerItem));
         } catch (err) {
             console.error('Remove from cart failed:', err);
         }
@@ -105,7 +118,7 @@ export function CartProvider({ children }) {
             const color = typeof selectedColor === 'object' ? (selectedColor?.label || '') : (selectedColor || '');
             const size = selectedSize || '';
             const res = await api.put(`/cart/item/${encodeURIComponent(productId)}/${encodeURIComponent(size)}/${encodeURIComponent(color)}`, { quantity: qty });
-            setItems(res.data.cart.items);
+            setItems((res.data.cart.items || []).map(normalizeServerItem));
         } catch (err) {
             console.error('Update cart failed:', err);
         }

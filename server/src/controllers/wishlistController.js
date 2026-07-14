@@ -1,5 +1,30 @@
 import Wishlist from "../models/Wishlist.js";
 
+export const getAllWishlists = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 20 } = req.query;
+
+        const total = await Wishlist.countDocuments();
+        const wishlists = await Wishlist.find()
+            .populate("user", "firstName lastName email avatar")
+            .populate("products", "name price discountPrice images slug")
+            .sort({ createdAt: -1 })
+            .skip((Number(page) - 1) * Number(limit))
+            .limit(Number(limit));
+
+        res.status(200).json({
+            success: true,
+            count: wishlists.length,
+            total,
+            totalPages: Math.ceil(total / Number(limit)),
+            currentPage: Number(page),
+            wishlists,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getWishlist = async (req, res, next) => {
     try {
         let wishlist = await Wishlist.findOne({ user: req.user._id }).populate(

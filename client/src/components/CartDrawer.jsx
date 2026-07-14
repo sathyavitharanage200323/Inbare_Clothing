@@ -51,15 +51,15 @@ export function CartDrawer() {
 
                   <div className="cart-item-actions">
                     <div className="cart-qty">
-                      <button onClick={() => updateQty(item.id, item.selectedColor, item.selectedSize, item.qty - 1)} aria-label="Decrease">
+                      <button onClick={() => updateQty(item.productId, item.selectedColor, item.selectedSize, item.qty - 1)} aria-label="Decrease">
                         <Minus size={14} strokeWidth={2.5} />
                       </button>
                       <span>{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, item.selectedColor, item.selectedSize, item.qty + 1)} aria-label="Increase">
+                      <button onClick={() => updateQty(item.productId, item.selectedColor, item.selectedSize, item.qty + 1)} aria-label="Increase">
                         <Plus size={14} strokeWidth={2.5} />
                       </button>
                     </div>
-                    <button className="cart-remove" onClick={() => removeFromCart(item.id, item.selectedColor, item.selectedSize)}>
+                    <button className="cart-remove" onClick={() => removeFromCart(item.productId, item.selectedColor, item.selectedSize)}>
                       <Trash2 size={16} strokeWidth={1.8} />
                     </button>
                   </div>

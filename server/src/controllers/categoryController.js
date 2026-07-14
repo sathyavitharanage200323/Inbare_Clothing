@@ -1,7 +1,41 @@
 import Category from "../models/Category.js";
+import Product from "../models/Product.js";
 
 export const getCategories = async (req, res, next) => {
     try {
+        const { withCount } = req.query;
+
+        if (withCount === "true") {
+            const categories = await Category.aggregate([
+                { $sort: { createdAt: -1 } },
+                {
+                    $lookup: {
+                        from: "products",
+                        localField: "_id",
+                        foreignField: "category",
+                        as: "products",
+                    },
+                },
+                {
+                    $addFields: {
+                        productCount: { $size: "$products" },
+                        activeCount: {
+                            $size: {
+                                $filter: { input: "$products", cond: { $eq: ["$$this.isActive", true] } },
+                            },
+                        },
+                    },
+                },
+                { $project: { products: 0 } },
+            ]);
+
+            return res.status(200).json({
+                success: true,
+                count: categories.length,
+                categories,
+            });
+        }
+
         const categories = await Category.find().sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -69,9 +103,10 @@ export const updateCategory = async (req, res, next) => {
             });
         }
 
+        const { name, description, image, isActive } = req.body;
         const updatedCategory = await Category.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            { name, description, image, isActive },
             { new: true, runValidators: true }
         );
 

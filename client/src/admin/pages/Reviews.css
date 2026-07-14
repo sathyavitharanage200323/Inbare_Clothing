@@ -1,0 +1,355 @@
+.admin-reviews {
+    padding: 0;
+}
+
+.admin-reviews__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.admin-reviews__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f5f5f5;
+    margin: 0;
+}
+
+.admin-reviews__subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 4px 0 0;
+}
+
+/* Toolbar */
+.admin-reviews__toolbar {
+    margin-bottom: 20px;
+}
+
+.admin-reviews__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-reviews__filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    color: #888;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.admin-reviews__filter-btn:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.admin-reviews__filter-btn.active {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+.admin-reviews__filter-btn svg {
+    fill: currentColor;
+}
+
+/* States */
+.admin-reviews__loading,
+.admin-reviews__empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    font-size: 0.95rem;
+}
+
+/* Review List */
+.admin-reviews__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+}
+
+.admin-reviews__card {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 18px;
+    transition: border-color 0.2s;
+}
+
+.admin-reviews__card:hover {
+    border-color: #2a2a2a;
+}
+
+.admin-reviews__card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.admin-reviews__user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-reviews__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #60a5fa;
+}
+
+.admin-reviews__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-reviews__user-name {
+    display: block;
+    color: #f5f5f5;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.admin-reviews__user-email {
+    display: block;
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.admin-reviews__date {
+    color: #555;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+/* Product */
+.admin-reviews__product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #111;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.admin-reviews__product-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.admin-reviews__product-img--placeholder {
+    background: #1a1a1a;
+}
+
+.admin-reviews__product-name {
+    color: #999;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Rating */
+.admin-reviews__rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.admin-reviews__stars {
+    display: flex;
+    gap: 2px;
+}
+
+.admin-reviews__stars svg {
+    color: #333;
+}
+
+.admin-reviews__stars svg.filled {
+    color: #fbbf24;
+    fill: #fbbf24;
+}
+
+.admin-reviews__rating-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Comment */
+.admin-reviews__comment {
+    color: #bbb;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0 0 14px;
+    padding: 10px;
+    background: #0e0e0e;
+    border-radius: 8px;
+    border-left: 3px solid #2a2a2a;
+}
+
+/* Actions */
+.admin-reviews__card-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-reviews__action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.admin-reviews__action-btn.delete {
+    color: #f87171;
+}
+
+.admin-reviews__action-btn.delete:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* Pagination */
+.admin-reviews__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 12px 0;
+}
+
+.admin-reviews__pagination button {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.2s;
+}
+
+.admin-reviews__pagination button:hover:not(:disabled) {
+    border-color: #555;
+}
+
+.admin-reviews__pagination button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.admin-reviews__pagination span {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Modal */
+.admin-reviews__modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.admin-reviews__modal {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 28px;
+    max-width: 440px;
+    width: 90%;
+}
+
+.admin-reviews__modal h3 {
+    color: #f5f5f5;
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+}
+
+.admin-reviews__modal p {
+    color: #999;
+    margin: 0 0 24px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.admin-reviews__modal p strong {
+    color: #f5f5f5;
+}
+
+.admin-reviews__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancel {
+    padding: 9px 18px;
+    background: #222;
+    border: 1px solid #333;
+    color: #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #2a2a2a;
+}
+
+.btn-delete {
+    padding: 9px 18px;
+    background: #991b1b;
+    border: 1px solid #b91c1c;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #b91c1c;
+}

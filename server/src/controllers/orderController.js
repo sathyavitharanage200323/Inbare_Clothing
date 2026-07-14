@@ -50,9 +50,19 @@ export const createOrder = async (req, res, next) => {
         });
 
         for (const item of cart.items) {
-            await Product.findByIdAndUpdate(item.product, {
-                $inc: { stock: -item.quantity },
-            });
+            const result = await Product.findOneAndUpdate(
+                { _id: item.product, stock: { $gte: item.quantity } },
+                { $inc: { stock: -item.quantity } },
+                { new: true }
+            );
+
+            if (!result) {
+                await Order.findByIdAndDelete(order._id);
+                return res.status(400).json({
+                    success: false,
+                    message: `Insufficient stock for ${item.name}`,
+                });
+            }
         }
 
         cart.items = [];

@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { sendTokenResponse } from "../utils/sendToken.js";
+import { sendPasswordReset, sendWelcomeEmail } from "../utils/email.js";
 import crypto from "crypto";
 
 export const register = async (req, res, next) => {
@@ -20,6 +21,8 @@ export const register = async (req, res, next) => {
             email,
             password,
         });
+
+        await sendWelcomeEmail(user);
 
         sendTokenResponse(user, 201, res, "Registration successful");
     } catch (error) {
@@ -70,6 +73,8 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
         expires: new Date(0),
     });
 
@@ -162,10 +167,11 @@ export const forgotPassword = async (req, res, next) => {
         user.passwordResetExpires = Date.now() + 15 * 60 * 1000;
         await user.save({ validateBeforeSave: false });
 
+        await sendPasswordReset(user, resetToken);
+
         res.status(200).json({
             success: true,
-            message: "Password reset token generated",
-            resetToken,
+            message: "Password reset email sent",
         });
     } catch (error) {
         next(error);

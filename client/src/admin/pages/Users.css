@@ -1,0 +1,576 @@
+.admin-users {
+    padding: 0;
+}
+
+.admin-users__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.admin-users__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f5f5f5;
+    margin: 0;
+}
+
+.admin-users__subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 4px 0 0;
+}
+
+/* Toolbar */
+.admin-users__toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.admin-users__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 0 14px;
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+    transition: border-color 0.2s;
+}
+
+.admin-users__search:focus-within {
+    border-color: #555;
+}
+
+.admin-users__search svg {
+    color: #666;
+    flex-shrink: 0;
+}
+
+.admin-users__search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: #f5f5f5;
+    padding: 10px 0;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.admin-users__search input::placeholder {
+    color: #666;
+}
+
+.admin-users__search-clear {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+}
+
+.admin-users__search-clear:hover {
+    color: #f5f5f5;
+}
+
+.admin-users__role-filters {
+    display: flex;
+    gap: 6px;
+}
+
+.admin-users__role-btn {
+    padding: 8px 16px;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    color: #888;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.admin-users__role-btn:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.admin-users__role-btn.active {
+    background: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.4);
+    color: #60a5fa;
+}
+
+/* States */
+.admin-users__loading,
+.admin-users__empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    font-size: 0.95rem;
+}
+
+/* Card Grid */
+.admin-users__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+}
+
+.admin-users__card {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 18px;
+    transition: border-color 0.2s;
+}
+
+.admin-users__card:hover {
+    border-color: #2a2a2a;
+}
+
+.admin-users__card.inactive {
+    opacity: 0.5;
+}
+
+.admin-users__card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.admin-users__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #60a5fa;
+}
+
+.admin-users__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-users__card-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-users__card-name h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f5f5f5;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-users__card-email {
+    font-size: 0.8rem;
+    color: #777;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-users__inactive-label {
+    position: absolute;
+    top: -4px;
+    right: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #ef4444;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Meta */
+.admin-users__card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #1a1a1a;
+    margin-bottom: 14px;
+}
+
+.admin-users__meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-users__meta-label {
+    font-size: 0.78rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.admin-users__meta-value {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+/* Badge */
+.admin-users__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.admin-users__badge.admin {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+}
+
+.admin-users__badge.customer {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+}
+
+.admin-users__verified {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.admin-users__verified.yes {
+    color: #4ade80;
+}
+
+.admin-users__verified.no {
+    color: #888;
+}
+
+/* Actions */
+.admin-users__card-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.admin-users__action-btn {
+    flex: 1;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-users__action-btn.edit {
+    color: #60a5fa;
+}
+
+.admin-users__action-btn.edit:hover {
+    background: rgba(96, 165, 250, 0.1);
+    border-color: rgba(96, 165, 250, 0.3);
+}
+
+.admin-users__action-btn.toggle {
+    color: #c084fc;
+}
+
+.admin-users__action-btn.toggle:hover {
+    background: rgba(192, 132, 252, 0.1);
+    border-color: rgba(192, 132, 252, 0.3);
+}
+
+.admin-users__action-btn.delete {
+    color: #f87171;
+}
+
+.admin-users__action-btn.delete:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* Pagination */
+.admin-users__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 12px 0;
+}
+
+.admin-users__pagination button {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: border-color 0.2s;
+}
+
+.admin-users__pagination button:hover:not(:disabled) {
+    border-color: #555;
+}
+
+.admin-users__pagination button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.admin-users__pagination span {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Modals */
+.admin-users__modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.admin-users__modal {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 28px;
+    max-width: 440px;
+    width: 90%;
+}
+
+.admin-users__modal h3 {
+    color: #f5f5f5;
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+}
+
+.admin-users__modal p {
+    color: #999;
+    margin: 0 0 24px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.admin-users__modal p strong {
+    color: #f5f5f5;
+}
+
+.admin-users__modal-warning {
+    display: block;
+    margin-top: 8px;
+    color: #f5a623;
+    font-size: 0.85rem;
+}
+
+.admin-users__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Edit Modal */
+.admin-users__modal--form {
+    max-width: 520px;
+    padding: 0;
+}
+
+.admin-users__modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.admin-users__modal-header h3 {
+    margin: 0;
+}
+
+.admin-users__modal-close {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    transition: color 0.2s;
+}
+
+.admin-users__modal-close:hover {
+    color: #f5f5f5;
+}
+
+.admin-users__form-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    margin: 20px 24px 0;
+}
+
+.admin-users__form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 20px 24px 0;
+}
+
+.admin-users__form-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+}
+
+.admin-users__form-field input[type="text"],
+.admin-users__form-field input[type="email"],
+.admin-users__form-field select {
+    width: 100%;
+    background: #0e0e0e;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    color: #f5f5f5;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.admin-users__form-field input:focus,
+.admin-users__form-field select:focus {
+    border-color: #555;
+}
+
+.admin-users__form-field select option {
+    background: #111;
+}
+
+.admin-users__form-check {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: #ccc;
+    cursor: pointer;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-weight: 500 !important;
+    padding-top: 10px;
+}
+
+.admin-users__form-check input[type="checkbox"] {
+    accent-color: #1a7f37;
+    width: 16px;
+    height: 16px;
+}
+
+.admin-users__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px 24px;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 20px;
+}
+
+.spin {
+    animation: u-spin 1s linear infinite;
+}
+
+@keyframes u-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn-cancel {
+    padding: 9px 18px;
+    background: #222;
+    border: 1px solid #333;
+    color: #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #2a2a2a;
+}
+
+.btn-delete {
+    padding: 9px 18px;
+    background: #991b1b;
+    border: 1px solid #b91c1c;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #b91c1c;
+}
+
+.btn-save {
+    padding: 10px 22px;
+    background: #1a7f37;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+    background: #1a9f47;
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

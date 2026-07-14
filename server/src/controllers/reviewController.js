@@ -1,6 +1,34 @@
 import Review from "../models/Review.js";
 import Product from "../models/Product.js";
 
+export const getAllReviews = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 20, rating } = req.query;
+
+        const query = {};
+        if (rating) query.rating = Number(rating);
+
+        const total = await Review.countDocuments(query);
+        const reviews = await Review.find(query)
+            .populate("user", "firstName lastName email avatar")
+            .populate("product", "name slug images")
+            .sort({ createdAt: -1 })
+            .skip((Number(page) - 1) * Number(limit))
+            .limit(Number(limit));
+
+        res.status(200).json({
+            success: true,
+            count: reviews.length,
+            total,
+            totalPages: Math.ceil(total / Number(limit)),
+            currentPage: Number(page),
+            reviews,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getProductReviews = async (req, res, next) => {
     try {
         const reviews = await Review.find({ product: req.params.productId })
@@ -79,11 +107,9 @@ export const updateReview = async (req, res, next) => {
             });
         }
 
-        review = await Review.findByIdAndUpdate(
-            req.params.id,
-            { rating, comment },
-            { new: true, runValidators: true }
-        );
+        review.rating = rating;
+        review.comment = comment;
+        await review.save();
 
         res.status(200).json({
             success: true,

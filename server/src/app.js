@@ -3,7 +3,14 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import morgan from "morgan";
+import hpp from "hpp";
+import swaggerUi from "swagger-ui-express";
+
+import config from "./config/env.js";
+import swaggerSpec from "./config/swagger.js";
+import sanitize from "./middleware/sanitize.js";
+import requestLogger from "./middleware/requestLogger.js";
+import { apiLimiter, authLimiter } from "./middleware/rateLimiter.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -13,38 +20,51 @@ import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
 
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+}));
 
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
+    origin: config.CORS_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.use(compression());
-
-app.use(express.json());
-
-app.use(express.urlencoded({
-    extended: true
-}));
-
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+app.use(hpp());
+app.use(sanitize);
+app.use(requestLogger);
 
-app.use(morgan("dev"));
+app.use("/api/", apiLimiter);
+app.use("/api/auth", authLimiter);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "INBARE API Docs",
+}));
 
 app.get("/", (req, res) => {
     res.json({
         success: true,
         message: "Welcome to INBARE API",
+        docs: "/api-docs",
     });
 });
 
+app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -53,6 +73,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
