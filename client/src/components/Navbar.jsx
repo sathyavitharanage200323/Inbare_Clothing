@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, ShoppingBag, X, Menu, ClipboardList, UserCircle } from 'lucide-react';
+import { Search, User, ShoppingBag, X, Menu, ClipboardList, UserCircle, LogOut } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
   const { setCartOpen, totalItems } = useCart();
+  const { user, logout } = useAuth();
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [query,       setQuery]       = useState('');
-  const [email,       setEmail]       = useState('');
-  const [newsletter,  setNewsletter]  = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,16 +24,15 @@ function Navbar() {
     }
   }
 
-  function handleEmailSubmit(e) {
-    e.preventDefault();
-    // hook up to auth later
-    console.log('sign in with:', email, '| newsletter:', newsletter);
+  async function handleLogout() {
+    await logout();
+    setAccountOpen(false);
+    navigate('/');
   }
 
   return (
     <>
       <header className="nb-header">
-        {/* left — nav links */}
         <nav className="nb-nav">
           <Link to="/">Home</Link>
           <Link to="/category/t-shirts">T-Shirts</Link>
@@ -42,10 +41,8 @@ function Navbar() {
           <Link to="/category/accessories">Accessories</Link>
         </nav>
 
-        {/* center — logo */}
         <Link to="/" className="nb-logo">INBARE</Link>
 
-        {/* right — icons */}
         <div className="nb-icons">
           <button aria-label="Search" onClick={() => setSearchOpen(true)}>
             <Search size={20} strokeWidth={1.5} />
@@ -63,72 +60,49 @@ function Navbar() {
         </div>
       </header>
 
-      {/* ── account modal ── */}
       {accountOpen && (
         <div className="nb-modal-overlay" onClick={() => setAccountOpen(false)}>
           <div className="nb-modal" onClick={(e) => e.stopPropagation()}>
-            {/* header */}
             <div className="nb-modal-header">
-              <h2>Sign in or create account</h2>
+              <h2>{user ? `Hi, ${user.firstName}` : 'Sign in or create account'}</h2>
               <button className="nb-modal-close" onClick={() => setAccountOpen(false)} aria-label="Close">
                 <X size={18} strokeWidth={2} />
               </button>
             </div>
 
-            {/* sign in with shop */}
-            <button className="nb-shop-btn">
-              Sign in with shop
-            </button>
-
-            {/* divider */}
-            <div className="nb-divider"><span>OR</span></div>
-
-            {/* email form */}
-            <form className="nb-email-form" onSubmit={handleEmailSubmit}>
-              <div className="nb-email-wrap">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <button type="submit" aria-label="Continue">→</button>
-              </div>
-              <label className="nb-newsletter-label">
-                <input
-                  type="checkbox"
-                  checked={newsletter}
-                  onChange={(e) => setNewsletter(e.target.checked)}
-                />
-                Email me with news and offers
-              </label>
-            </form>
-
-            {/* quick links */}
             <div className="nb-modal-links">
-              <button onClick={() => { navigate('/signin');  setAccountOpen(false); }}>
-                <UserCircle size={18} strokeWidth={1.5} />
-                Sign In
-              </button>
-              <button onClick={() => { navigate('/signup');  setAccountOpen(false); }}>
-                <UserCircle size={18} strokeWidth={1.5} />
-                Sign Up
-              </button>
-              <button onClick={() => { navigate('/orders');  setAccountOpen(false); }}>
-                <ClipboardList size={18} strokeWidth={1.5} />
-                Orders
-              </button>
-              <button onClick={() => { navigate('/profile'); setAccountOpen(false); }}>
-                <UserCircle size={18} strokeWidth={1.5} />
-                Profile
-              </button>
+              {user ? (
+                <>
+                  <button onClick={() => { navigate('/profile'); setAccountOpen(false); }}>
+                    <UserCircle size={18} strokeWidth={1.5} />
+                    Profile
+                  </button>
+                  <button onClick={() => { navigate('/profile'); setAccountOpen(false); }}>
+                    <ClipboardList size={18} strokeWidth={1.5} />
+                    Orders
+                  </button>
+                  <button onClick={handleLogout}>
+                    <LogOut size={18} strokeWidth={1.5} />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => { navigate('/signin'); setAccountOpen(false); }}>
+                    <UserCircle size={18} strokeWidth={1.5} />
+                    Sign In
+                  </button>
+                  <button onClick={() => { navigate('/signup'); setAccountOpen(false); }}>
+                    <UserCircle size={18} strokeWidth={1.5} />
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* ── search overlay ── */}
       {searchOpen && (
         <div className="nb-search-overlay">
           <form onSubmit={handleSearch} className="nb-search-form">
@@ -147,7 +121,6 @@ function Navbar() {
         </div>
       )}
 
-      {/* ── mobile drawer ── */}
       {menuOpen && (
         <div className="nb-drawer-overlay" onClick={() => setMenuOpen(false)}>
           <nav className="nb-drawer" onClick={(e) => e.stopPropagation()}>

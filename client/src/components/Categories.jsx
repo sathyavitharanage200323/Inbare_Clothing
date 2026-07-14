@@ -1,37 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import hoodieImg from '../assets/Hoodie.jpg';
-import jacketImg from '../assets/jacket.jpg';
-import accessoriesImg from '../assets/Accessories.jpg';
+import api from '../services/api';
 
-const categories = [
-  {
-    id: 1,
-    name: "T-Shirts",
-    slug: "t-shirts",
-    img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800",
-  },
-  {
-    id: 2,
-    name: "Hoodies",
-    slug: "hoodies",
-    img: hoodieImg,
-  },
-  {
-    id: 3,
-    name: "Jackets",
-    slug: "jackets",
-    img: jacketImg,
-  },
-  {
-    id: 4,
-    name: "Accessories",
-    slug: "accessories",
-    img: accessoriesImg,
-  },
+const fallbackCategories = [
+  { _id: '1', name: 'T-Shirts', slug: 't-shirts', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800' },
+  { _id: '2', name: 'Hoodies', slug: 'hoodies', image: 'https://images.unsplash.com/photo-1556821840-3a63f7563303?q=80&w=800' },
+  { _id: '3', name: 'Jackets', slug: 'jackets', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=800' },
+  { _id: '4', name: 'Accessories', slug: 'accessories', image: 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=800' },
 ];
 
 function Categories() {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState(fallbackCategories);
+
+  useEffect(() => {
+    api.get('/categories')
+      .then((res) => {
+        if (res.data.categories.length > 0) {
+          setCategories(res.data.categories);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="categories">
@@ -41,11 +31,11 @@ function Categories() {
         {categories.map((cat) => (
           <div
             className="category-card"
-            key={cat.id}
+            key={cat._id || cat.slug}
             onClick={() => navigate(`/category/${cat.slug}`)}
             style={{ cursor: 'pointer' }}
           >
-            <img src={cat.img} alt={cat.name} />
+            <img src={cat.image} alt={cat.name} />
             <h3>{cat.name}</h3>
           </div>
         ))}

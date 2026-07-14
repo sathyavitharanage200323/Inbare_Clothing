@@ -1,28 +1,19 @@
-const bestSellers = [
-  {
-    id: 1,
-    name: "INBARE Essential Tee",
-    price: "LKR 4,990",
-    badge: "BEST SELLER",
-    img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200",
-  },
-  {
-    id: 2,
-    name: "Oversized Hoodie",
-    price: "LKR 7,990",
-    badge: "HOT",
-    img: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200",
-  },
-  {
-    id: 3,
-    name: "Street Bomber Jacket",
-    price: "LKR 10,990",
-    badge: "TRENDING",
-    img: "https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=1200",
-  },
-];
+import { useState, useEffect } from 'react';
+import api from '../services/api';
 
 function BestSellers() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    api.get('/products?sort=-averageRating&limit=3')
+      .then((res) => setProducts(res.data.products))
+      .catch(() => {});
+  }, []);
+
+  if (products.length === 0) return null;
+
+  const badges = ['BEST SELLER', 'HOT', 'TRENDING'];
+
   return (
     <section className="best-sellers">
       <div className="section-title">
@@ -31,14 +22,18 @@ function BestSellers() {
       </div>
 
       <div className="best-grid">
-        {bestSellers.map((item) => (
-          <div className="best-card" key={item.id}>
-            <div className="badge">{item.badge}</div>
-            <img src={item.img} alt={item.name} />
-            <h3>{item.name}</h3>
-            <p>{item.price}</p>
-          </div>
-        ))}
+        {products.map((product, i) => {
+          const img = product.images?.[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200';
+          const price = product.discountPrice && product.discountPrice < product.price ? product.discountPrice : product.price;
+          return (
+            <div className="best-card" key={product._id}>
+              <div className="badge">{badges[i] || 'POPULAR'}</div>
+              <img src={img} alt={product.name} />
+              <h3>{product.name}</h3>
+              <p>LKR {price.toLocaleString('en-US')}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

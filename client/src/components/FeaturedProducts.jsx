@@ -1,51 +1,47 @@
-import { useState } from 'react';
-import oversizedTee from '../assets/Oversized Tee f.jpg';
-import urbanHoodie1 from '../assets/Urban Hoodie1.jpg';
-import urbanHoodie2 from '../assets/Urban Hoodie2.jpg';
+import { useState, useEffect } from 'react';
+import api from '../services/api';
 
 function FeaturedProducts() {
-  const [urbanHover, setUrbanHover] = useState(false);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    api.get('/products/featured')
+      .then((res) => setProducts(res.data.products.slice(0, 3)))
+      .catch(() => {});
+  }, []);
+
+  if (products.length === 0) return null;
 
   return (
     <section className="featured">
       <h2>Featured Collection</h2>
 
       <div className="products">
-
-        <div className="product-card">
-          <img
-            src={oversizedTee}
-            alt="Oversized Tee"
-          />
-          <h3>Oversized Tee</h3>
-          <span>LKR 4,500</span>
-        </div>
-
-        <div 
-          className="product-card"
-          onMouseEnter={() => setUrbanHover(true)}
-          onMouseLeave={() => setUrbanHover(false)}
-        >
-          <img
-            src={urbanHover ? urbanHoodie2 : urbanHoodie1}
-            alt="Urban Hoodie"
-            className="product-img-fade"
-          />
-          <h3>Urban Hoodie</h3>
-          <span>LKR 7,900</span>
-        </div>
-
-        <div className="product-card">
-          <img
-            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800"
-            alt="Classic Jacket"
-          />
-          <h3>Classic Jacket</h3>
-          <span>LKR 9,500</span>
-        </div>
-
+        {products.map((product) => (
+          <FeaturedCard key={product._id} product={product} />
+        ))}
       </div>
     </section>
+  );
+}
+
+function FeaturedCard({ product }) {
+  const [hover, setHover] = useState(false);
+  const img = product.images?.[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800';
+  const hoverImg = product.images?.[1] || img;
+  const displayImg = hover && product.images?.length > 1 ? hoverImg : img;
+  const price = product.discountPrice && product.discountPrice < product.price ? product.discountPrice : product.price;
+
+  return (
+    <div
+      className="product-card"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <img src={displayImg} alt={product.name} className="product-img-fade" />
+      <h3>{product.name}</h3>
+      <span>LKR {price.toLocaleString('en-US')}</span>
+    </div>
   );
 }
 
