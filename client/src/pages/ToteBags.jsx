@@ -1,54 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingBag, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { CartDrawer } from '../components/CartDrawer';
-import tot1  from '../assets/tot-1.jpg';
-import tot2  from '../assets/tot-2.jpg';
-import tot3  from '../assets/tot-3.jpg';
-import tot4  from '../assets/tot-4.jpg';
-import tot5  from '../assets/tot-5.jpg';
-import tot6  from '../assets/tot-6.jpg';
-import tot7  from '../assets/tot-7.jpg';
-import tot8  from '../assets/tot-8.jpg';
-import tot9  from '../assets/tot-9.jpg';
-import tot10 from '../assets/tot-10.jpg';
+import api from '../services/api';
 import './ToteBags.css';
 
-const totes = [
-  { id: 1,  name: 'The Natural Tote',      price: 1200, img: tot1,  colors: ['#c8a97e','#ffffff','#000000'], sizes: ['One Size'] },
-  { id: 2,  name: 'Washed Canvas Tote',    price: 1400, img: tot2,  colors: ['#e8dcc8','#1f2937'],           sizes: ['One Size'] },
-  { id: 3,  name: 'Heritage Carry Bag',    price: 1600, img: tot3,  colors: ['#92400e','#000000','#ffffff'], sizes: ['One Size'] },
-  { id: 4,  name: 'Minimal Market Tote',   price: 1300, img: tot4,  colors: ['#ffffff','#6b7280','#000000'], sizes: ['One Size'] },
-  { id: 5,  name: 'Linen Everyday Bag',    price: 1800, img: tot5,  colors: ['#d4c5a9','#000000'],           sizes: ['One Size'] },
-  { id: 6,  name: 'Studio Tote',           price: 2000, img: tot6,  colors: ['#000000','#ffffff','#b45309'], sizes: ['One Size'] },
-  { id: 7,  name: 'Archive Shopper',       price: 1700, img: tot7,  colors: ['#9ca3af','#1f2937','#ffffff'], sizes: ['One Size'] },
-  { id: 8,  name: 'Raw Edge Carry-All',    price: 1500, img: tot8,  colors: ['#c8a97e','#4b5563'],           sizes: ['One Size'] },
-  { id: 9,  name: 'Atelier Tote',          price: 1900, img: tot9,  colors: ['#000000','#f5f0e8'],           sizes: ['One Size'] },
-  { id: 10, name: 'Grand Market Bag',      price: 1800, img: tot10, colors: ['#ffffff','#000000','#92400e'], sizes: ['One Size'] },
-];
-
-/* ── individual card ── */
 function ToteCard({ tote }) {
   const { addToCart, setCartOpen } = useCart();
-  const [color,  setColor]  = useState(tote.colors[0]); // auto-select first color
-  const [size,   setSize]   = useState(tote.sizes[0]);   // auto-select first size
-  const [added,  setAdded]  = useState(false);
-  const [hover,  setHover]  = useState(false);
+  const [color, setColor] = useState(tote.colors?.[0] || '#000000');
+  const [size, setSize] = useState(tote.sizes?.[0] || 'One Size');
+  const [added, setAdded] = useState(false);
+  const [hover, setHover] = useState(false);
+
+  const img = tote.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600';
+  const price = tote.discountPrice && tote.discountPrice < tote.price ? tote.discountPrice : tote.price;
 
   function handleAdd() {
     addToCart({
-      id: tote.id,
+      productId: tote._id,
       name: tote.name,
-      price: tote.price,
-      img: tote.img,
-      selectedColor: null, // tote bags don't display color in cart
+      price: price,
+      img: img,
+      selectedColor: null,
       selectedSize: size,
     });
     setAdded(true);
     setTimeout(() => {
       setAdded(false);
-      setCartOpen(true); // open cart drawer
+      setCartOpen(true);
     }, 600);
   }
 
@@ -58,36 +38,34 @@ function ToteCard({ tote }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* image */}
       <div className="tb-img-wrap">
-        <img src={tote.img} alt={tote.name} className="tb-img" />
+        <img src={img} alt={tote.name} className="tb-img" />
         <div className="tb-img-overlay" />
       </div>
 
-      {/* info panel */}
       <div className="tb-body">
         <div className="tb-top-row">
           <h3 className="tb-name">{tote.name}</h3>
-          <span className="tb-price">LKR {tote.price.toLocaleString('en-US')}</span>
+          <span className="tb-price">LKR {price.toLocaleString('en-US')}</span>
         </div>
 
-        {/* sizes */}
-        <div className="tb-section">
-          <p className="tb-label">Size</p>
-          <div className="tb-sizes">
-            {tote.sizes.map((s) => (
-              <button
-                key={s}
-                className={`tb-size ${size === s ? 'active' : ''}`}
-                onClick={() => setSize(s)}
-              >
-                {s}
-              </button>
-            ))}
+        {tote.sizes && tote.sizes.length > 0 && !(tote.sizes.length === 1 && tote.sizes[0] === 'One Size') && (
+          <div className="tb-section">
+            <p className="tb-label">Size</p>
+            <div className="tb-sizes">
+              {tote.sizes.map((s) => (
+                <button
+                  key={s}
+                  className={`tb-size ${size === s ? 'active' : ''}`}
+                  onClick={() => setSize(s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* add to bag */}
         <button
           className={`tb-add ${added ? 'added' : ''}`}
           onClick={handleAdd}
@@ -103,15 +81,33 @@ function ToteCard({ tote }) {
   );
 }
 
-/* ── page ── */
 export default function ToteBags() {
   const navigate = useNavigate();
+  const [totes, setTotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/products?limit=50')
+      .then((res) => {
+        const toteProducts = res.data.products.filter(
+          (p) => p.category?.name?.toLowerCase().includes('tote') ||
+                 p.name?.toLowerCase().includes('tote') ||
+                 p.category?.slug?.includes('tote')
+        );
+        if (toteProducts.length > 0) {
+          setTotes(toteProducts);
+        } else {
+          setTotes(res.data.products.slice(0, 10));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <>
       <CartDrawer />
       <div className="tb-page">
-      {/* hero banner */}
       <div className="tb-hero">
         <div className="tb-hero-content">
           <p className="tb-eyebrow">The Accessory Edit</p>
@@ -123,19 +119,21 @@ export default function ToteBags() {
         </div>
       </div>
 
-      {/* back + count row */}
       <div className="tb-bar">
         <button className="tb-back" onClick={() => navigate(-1)}>
           <ArrowLeft size={16} strokeWidth={2} /> Back
         </button>
-        <span className="tb-total">{totes.length} pieces</span>
+        <span className="tb-total">{loading ? '...' : `${totes.length} pieces`}</span>
       </div>
 
-      {/* grid */}
       <section className="tb-grid">
-        {totes.map((t) => (
-          <ToteCard key={t.id} tote={t} />
-        ))}
+        {loading ? (
+          <p className="tb-total" style={{ textAlign: 'center', gridColumn: '1 / -1' }}>Loading...</p>
+        ) : (
+          totes.map((t) => (
+            <ToteCard key={t._id} tote={t} />
+          ))
+        )}
       </section>
     </div>
     </>
