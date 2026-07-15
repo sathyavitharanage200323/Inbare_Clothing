@@ -5,9 +5,14 @@ import CategoryPage from './pages/CategoryPage'
 import ToteBags from './pages/ToteBags'
 import Checkout from './pages/Checkout'
 import SearchResults from './pages/SearchResults'
+import ProductDetail from './pages/ProductDetail'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Profile from './pages/Profile'
+import StoreOrders from './pages/Orders'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import Wishlist from './pages/Wishlist'
 import NotFound from './pages/NotFound'
 import ScrollToTop from './components/ScrollToTop'
 import StoreLayout from './components/StoreLayout'
@@ -40,10 +45,15 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/tote-bags" element={<ToteBags />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<StoreOrders />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
