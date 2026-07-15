@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import './ProductForm.css';
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -120,28 +121,28 @@ export default function ProductForm({ product, categories, onClose, onSuccess })
 
                     <div className="pf-grid">
                         <div className="pf-field pf-full">
-                            <label>Product Name *</label>
-                            <input name="name" value={form.name} onChange={handleChange} placeholder="e.g. Classic Cotton Tee" />
+                            <label htmlFor="pf-name">Product Name *</label>
+                            <input id="pf-name" type="text" name="name" value={form.name} onChange={handleChange} placeholder="e.g. Classic Cotton Tee" />
                         </div>
 
                         <div className="pf-field pf-full">
-                            <label>Description *</label>
-                            <textarea name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Describe the product..." />
+                            <label htmlFor="pf-description">Description *</label>
+                            <textarea id="pf-description" name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Describe the product..." />
                         </div>
 
                         <div className="pf-field">
-                            <label>Price *</label>
-                            <input name="price" type="number" step="0.01" min="0" value={form.price} onChange={handleChange} placeholder="0.00" />
+                            <label htmlFor="pf-price">Price *</label>
+                            <input id="pf-price" name="price" type="number" step="0.01" min="0" value={form.price} onChange={handleChange} placeholder="0.00" />
                         </div>
 
                         <div className="pf-field">
-                            <label>Discount Price</label>
-                            <input name="discountPrice" type="number" step="0.01" min="0" value={form.discountPrice} onChange={handleChange} placeholder="0.00" />
+                            <label htmlFor="pf-discountPrice">Discount Price</label>
+                            <input id="pf-discountPrice" name="discountPrice" type="number" step="0.01" min="0" value={form.discountPrice} onChange={handleChange} placeholder="0.00" />
                         </div>
 
                         <div className="pf-field">
-                            <label>Category *</label>
-                            <select name="category" value={form.category} onChange={handleChange}>
+                            <label htmlFor="pf-category">Category *</label>
+                            <select id="pf-category" name="category" value={form.category} onChange={handleChange}>
                                 <option value="">Select category</option>
                                 {categories.map((c) => (
                                     <option key={c._id} value={c._id}>{c.name}</option>
@@ -150,8 +151,8 @@ export default function ProductForm({ product, categories, onClose, onSuccess })
                         </div>
 
                         <div className="pf-field">
-                            <label>Stock *</label>
-                            <input name="stock" type="number" min="0" value={form.stock} onChange={handleChange} placeholder="0" />
+                            <label htmlFor="pf-stock">Stock *</label>
+                            <input id="pf-stock" name="stock" type="number" min="0" value={form.stock} onChange={handleChange} placeholder="0" />
                         </div>
 
                         <div className="pf-field pf-full">
@@ -183,7 +184,7 @@ export default function ProductForm({ product, categories, onClose, onSuccess })
                             <div className="pf-images">
                                 {images.map((img, i) => (
                                     <div key={i} className="pf-image-preview">
-                                        <img src={img} alt="" />
+                                        <img src={imageUrl(img)} alt="" />
                                         <button type="button" className="pf-image-remove" onClick={() => removeImage(i)}>
                                             <X size={14} />
                                         </button>

@@ -84,6 +84,7 @@
 
 .pf-field input[type="text"],
 .pf-field input[type="number"],
+.pf-field input:not([type]),
 .pf-field select,
 .pf-field textarea {
     width: 100%;
