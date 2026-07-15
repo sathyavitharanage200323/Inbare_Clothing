@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Lock, Info } from 'lucide-react';
+import { ArrowLeft, Lock, Info, Tag, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -25,8 +25,44 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
+
   const shippingCost = 399;
-  const total = subtotal + shippingCost;
+
+  let discountAmount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.discountType === 'percent') {
+      discountAmount = Math.round((subtotal * appliedCoupon.discountValue) / 100);
+    } else {
+      discountAmount = Math.min(appliedCoupon.discountValue, subtotal);
+    }
+  }
+
+  const total = Math.max(0, subtotal - discountAmount) + shippingCost;
+
+  async function handleApplyCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError('');
+    try {
+      const res = await api.post('/coupons/validate', { code: couponCode.trim() });
+      setAppliedCoupon(res.data.coupon);
+    } catch (err) {
+      setCouponError(err.response?.data?.message || 'Invalid coupon');
+      setAppliedCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError('');
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,6 +84,7 @@ export default function Checkout() {
         shippingAddress: { street: address, city, state, zipCode, country },
         paymentMethod,
         note,
+        couponCode: appliedCoupon?.code || undefined,
       });
       await clearCart();
       alert('Order placed successfully!');
@@ -172,7 +209,7 @@ export default function Checkout() {
                       <span className="shipping-name">Standard</span>
                       <span className="shipping-time">3 - 12 Business Days</span>
                     </div>
-                    <span className="shipping-price">Rs 399.00</span>
+                    <span className="shipping-price">LKR 399.00</span>
                   </div>
                 </label>
               </div>
@@ -262,19 +299,57 @@ export default function Checkout() {
             })}
           </div>
 
+          <div className="discount-section">
+            <div className="discount-input-wrap">
+              <input
+                type="text"
+                placeholder="Coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                disabled={!!appliedCoupon}
+              />
+              {appliedCoupon ? (
+                <button type="button" onClick={handleRemoveCoupon} className="discount-remove-btn">
+                  <X size={16} /> Remove
+                </button>
+              ) : (
+                <button type="button" onClick={handleApplyCoupon} disabled={couponLoading}>
+                  {couponLoading ? 'Checking...' : 'Apply'}
+                </button>
+              )}
+            </div>
+            {couponError && <p className="discount-error">{couponError}</p>}
+            {appliedCoupon && (
+              <div className="discount-applied">
+                <Tag size={14} />
+                <span>
+                  {appliedCoupon.code} — {appliedCoupon.discountType === 'percent'
+                    ? `${appliedCoupon.discountValue}% off`
+                    : `LKR ${appliedCoupon.discountValue.toLocaleString('en-US')} off`}
+                </span>
+              </div>
+            )}
+          </div>
+
           <div className="order-totals">
             <div className="total-row">
               <span>Subtotal</span>
-              <span>Rs {subtotal.toLocaleString('en-US')}.00</span>
+              <span>LKR {subtotal.toLocaleString('en-US')}.00</span>
             </div>
+            {discountAmount > 0 && (
+              <div className="total-row" style={{ color: 'var(--success)' }}>
+                <span>Discount</span>
+                <span>- LKR {discountAmount.toLocaleString('en-US')}.00</span>
+              </div>
+            )}
             <div className="total-row">
               <span>Shipping</span>
-              <span>Rs {shippingCost.toLocaleString('en-US')}.00</span>
+              <span>LKR {shippingCost.toLocaleString('en-US')}.00</span>
             </div>
             <div className="total-row total-final">
               <span>Total</span>
               <span>
-                <small>LKR</small> Rs {total.toLocaleString('en-US')}.00
+                <small>LKR</small> {total.toLocaleString('en-US')}.00
               </span>
             </div>
           </div>
