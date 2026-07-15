@@ -1,18 +1,39 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { imageUrl } from '../services/imageUrl';
+import { ProductCardSkeleton } from './Skeleton';
 
 function BestSellers() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/products?sort=-averageRating&limit=3')
       .then((res) => setProducts(res.data.products))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  if (products.length === 0) return null;
-
   const badges = ['BEST SELLER', 'HOT', 'TRENDING'];
+
+  if (loading) {
+    return (
+      <section className="best-sellers">
+        <div className="section-title">
+          <span>MOST WANTED</span>
+          <h2>Best Sellers</h2>
+        </div>
+        <div className="best-grid">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (products.length === 0) return null;
 
   return (
     <section className="best-sellers">
@@ -23,15 +44,15 @@ function BestSellers() {
 
       <div className="best-grid">
         {products.map((product, i) => {
-          const img = product.images?.[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200';
+          const img = imageUrl(product.images?.[0]) || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200';
           const price = product.discountPrice && product.discountPrice < product.price ? product.discountPrice : product.price;
           return (
-            <div className="best-card" key={product._id}>
+            <Link to={`/product/${product.slug}`} className="best-card" key={product._id}>
               <div className="badge">{badges[i] || 'POPULAR'}</div>
               <img src={img} alt={product.name} />
               <h3>{product.name}</h3>
               <p>LKR {price.toLocaleString('en-US')}</p>
-            </div>
+            </Link>
           );
         })}
       </div>

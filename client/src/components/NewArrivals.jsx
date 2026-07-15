@@ -1,14 +1,34 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { imageUrl } from '../services/imageUrl';
+import { ProductCardSkeleton } from './Skeleton';
 
 function NewArrivals() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/products?sort=-createdAt&limit=4')
       .then((res) => setProducts(res.data.products))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return (
+      <section className="new-arrivals">
+        <div className="section-header">
+          <h2>New Arrivals</h2>
+        </div>
+        <div className="arrival-grid">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (products.length === 0) return null;
 
@@ -30,14 +50,13 @@ function NewArrivals() {
 
 function ArrivalCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
-  const img = product.images?.[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800';
-  const hoverImg = product.images?.[1] || img;
+  const img = imageUrl(product.images?.[0]) || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800';
+  const hoverImg = imageUrl(product.images?.[1]) || img;
   const displayImg = isHovered && product.images?.length > 1 ? hoverImg : img;
   const price = product.discountPrice && product.discountPrice < product.price ? product.discountPrice : product.price;
 
   return (
-    <div
-      className="arrival-card"
+    <Link to={`/product/${product.slug}`} className="arrival-card"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -48,7 +67,7 @@ function ArrivalCard({ product }) {
         <h3>{product.name}</h3>
         <p>LKR {price.toLocaleString('en-US')}</p>
       </div>
-    </div>
+    </Link>
   );
 }
 
