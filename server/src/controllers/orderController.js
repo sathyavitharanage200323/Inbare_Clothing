@@ -1,10 +1,13 @@
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
+import User from "../models/User.js";
+import Coupon from "../models/Coupon.js";
+import { sendOrderConfirmation } from "../utils/email.js";
 
 export const createOrder = async (req, res, next) => {
     try {
-        const { shippingAddress, paymentMethod, note } = req.body;
+        const { shippingAddress, paymentMethod, note, couponCode } = req.body;
 
         const cart = await Cart.findOne({ user: req.user._id });
         if (!cart || cart.items.length === 0) {
@@ -30,7 +33,48 @@ export const createOrder = async (req, res, next) => {
             }
         }
 
-        const totalAmount = cart.totalAmount;
+        let totalAmount = cart.totalAmount;
+        let discountAmount = 0;
+        let appliedCouponCode = null;
+
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+            if (!coupon || !coupon.isActive) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid coupon code",
+                });
+            }
+            if (coupon.expiresAt && coupon.expiresAt < new Date()) {
+                return res.status(400).json({
+                    success: false,
+                    message: "This coupon has expired",
+                });
+            }
+            if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
+                return res.status(400).json({
+                    success: false,
+                    message: "This coupon has reached its usage limit",
+                });
+            }
+            if (totalAmount < coupon.minOrderAmount) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Minimum order amount for this coupon is LKR ${coupon.minOrderAmount}`,
+                });
+            }
+
+            if (coupon.discountType === "percent") {
+                discountAmount = Math.round((totalAmount * coupon.discountValue) / 100);
+            } else {
+                discountAmount = Math.min(coupon.discountValue, totalAmount);
+            }
+
+            totalAmount = Math.max(0, totalAmount - discountAmount);
+            appliedCouponCode = coupon.code;
+            coupon.usedCount += 1;
+            await coupon.save();
+        }
 
         const order = await Order.create({
             user: req.user._id,
@@ -47,6 +91,8 @@ export const createOrder = async (req, res, next) => {
             paymentMethod,
             totalAmount,
             note,
+            couponCode: appliedCouponCode,
+            discountAmount,
         });
 
         for (const item of cart.items) {
@@ -67,6 +113,9 @@ export const createOrder = async (req, res, next) => {
 
         cart.items = [];
         await cart.save();
+
+        const orderUser = await User.findById(req.user._id);
+        if (orderUser) sendOrderConfirmation(order, orderUser);
 
         res.status(201).json({
             success: true,

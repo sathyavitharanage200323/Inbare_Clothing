@@ -66,18 +66,28 @@ export const sendOrderConfirmation = (order, user) =>
         `,
     });
 
-export const sendPasswordReset = (user, resetToken) =>
-    sendEmail({
+export const sendPasswordReset = (user, resetToken) => {
+    const resetUrl = `${config.CLIENT_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
+    return sendEmail({
         to: user.email,
         subject: "Password Reset Request",
         html: `
             <h1>Password Reset</h1>
             <p>Hi ${user.firstName},</p>
-            <p>You requested a password reset. Use the token below:</p>
-            <p><strong>${resetToken}</strong></p>
-            <p>This token expires in 15 minutes.</p>
-            <p>If you didn't request this, ignore this email.</p>
+            <p>You requested a password reset. Click the button below to set a new password:</p>
+            <p style="margin: 24px 0;">
+                <a href="${resetUrl}" style="background:#111;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;">
+                    Reset My Password
+                </a>
+            </p>
+            <p>Or copy this link into your browser:</p>
+            <p style="word-break:break-all;color:#555;">${resetUrl}</p>
+            <p>This link expires in 15 minutes.</p>
+            <p>If you didn't request this, you can safely ignore this email.</p>
+            <br/>
+            <p>— The INBARE Team</p>
         `,
     });
+};
 
 export default sendEmail;
