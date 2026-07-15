@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { imageUrl } from '../services/imageUrl';
 
 const fallbackCategories = [
   { _id: '1', name: 'T-Shirts', slug: 't-shirts', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800' },
@@ -8,6 +9,13 @@ const fallbackCategories = [
   { _id: '3', name: 'Jackets', slug: 'jackets', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=800' },
   { _id: '4', name: 'Accessories', slug: 'accessories', image: 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=800' },
 ];
+
+// Resolve category image: could be a GridFS ObjectId or already a full URL
+function getCategoryImage(image) {
+  if (!image) return null;
+  if (typeof image === 'string' && image.startsWith('http')) return image;
+  return imageUrl(image);
+}
 
 function Categories() {
   const navigate = useNavigate();
@@ -35,7 +43,7 @@ function Categories() {
             onClick={() => navigate(`/category/${cat.slug}`)}
             style={{ cursor: 'pointer' }}
           >
-            <img src={cat.image} alt={cat.name} />
+            <img src={getCategoryImage(cat.image)} alt={cat.name} />
             <h3>{cat.name}</h3>
           </div>
         ))}
