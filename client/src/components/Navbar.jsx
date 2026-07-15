@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, ShoppingBag, X, Menu, ClipboardList, UserCircle, LogOut } from 'lucide-react';
+import { Search, User, ShoppingBag, X, Menu, ClipboardList, UserCircle, LogOut, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Navbar.css';
 
 function Navbar() {
   const { setCartOpen, totalItems } = useCart();
   const { user, logout } = useAuth();
+  const { items: wishlistItems } = useWishlist();
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [menuOpen,    setMenuOpen]    = useState(false);
@@ -47,6 +49,10 @@ function Navbar() {
           <button aria-label="Search" onClick={() => setSearchOpen(true)}>
             <Search size={20} strokeWidth={1.5} />
           </button>
+          <Link to="/wishlist" aria-label="Wishlist" className="nb-icon-link">
+            <Heart size={20} strokeWidth={1.5} />
+            {wishlistItems.length > 0 && <span className="nb-bag-count">{wishlistItems.length}</span>}
+          </Link>
           <button aria-label="Account" onClick={() => setAccountOpen(true)}>
             <User size={20} strokeWidth={1.5} />
           </button>

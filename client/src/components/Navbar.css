@@ -72,6 +72,21 @@
 
 .nb-icons button:hover { color: var(--text-primary); }
 
+.nb-icon-link {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nb-icon-link:hover { color: var(--text-primary); }
+
 .nb-hamburger { display: none; }
 
 /* ── search overlay ── */
