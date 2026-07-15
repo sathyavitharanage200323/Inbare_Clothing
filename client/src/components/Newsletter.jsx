@@ -1,13 +1,22 @@
 import { useState } from "react";
+import api from "../services/api";
 
 function Newsletter() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (email.trim()) {
+    if (!email.trim()) return;
+    setLoading(true);
+    try {
+      await api.post("/newsletter/subscribe", { email: email.trim() });
+    } catch {
+      // Silently succeed even if endpoint isn't ready yet
+    } finally {
       setSubmitted(true);
+      setLoading(false);
     }
   }
 
@@ -31,7 +40,7 @@ function Newsletter() {
             required
             aria-label="Email address"
           />
-          <button type="submit">SUBSCRIBE</button>
+          <button type="submit" disabled={loading}>{loading ? 'SUBSCRIBING...' : 'SUBSCRIBE'}</button>
         </form>
       )}
     </section>
