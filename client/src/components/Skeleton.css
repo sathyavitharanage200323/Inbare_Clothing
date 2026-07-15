@@ -1,0 +1,136 @@
+@keyframes sk-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.3; }
+}
+
+.sk-block {
+  background: var(--text-placeholder);
+  border-radius: 8px;
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── product card skeleton ── */
+.sk-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sk-img {
+  width: 100%;
+  height: 320px;
+  background: var(--text-placeholder);
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+.sk-img-tall {
+  height: 360px;
+}
+
+.sk-lines {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sk-line {
+  height: 14px;
+  border-radius: 6px;
+  background: var(--text-placeholder);
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+.sk-line-title { width: 70%; height: 16px; }
+.sk-line-sub { width: 40%; }
+.sk-line-price { width: 30%; height: 18px; }
+.sk-line-body { width: 100%; }
+.sk-line-body.sk-w60 { width: 60%; }
+.sk-line-body.sk-w90 { width: 90%; }
+.sk-w80 { width: 80%; }
+.sk-w40 { width: 40%; }
+.sk-w30 { width: 30%; }
+.sk-w100 { width: 100%; }
+
+.sk-btn-placeholder {
+  margin-top: 8px;
+  height: 44px;
+  border-radius: 50px;
+  background: var(--text-placeholder);
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+.sk-btn-short {
+  height: 38px;
+}
+
+/* ── grid ── */
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .sk-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .sk-grid { grid-template-columns: 1fr; }
+}
+
+/* ── product page skeleton ── */
+.sk-page {
+  min-height: 100vh;
+  padding: 140px 8% 80px;
+}
+
+.sk-page-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.sk-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sk-main-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 16px;
+  background: var(--text-placeholder);
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+.sk-thumbs {
+  display: flex;
+  gap: 12px;
+}
+
+.sk-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: var(--text-placeholder);
+  animation: sk-pulse 1.5s ease-in-out infinite;
+}
+
+.sk-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .sk-page-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
