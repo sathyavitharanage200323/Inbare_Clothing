@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function Footer() {
   return (
     <footer className="footer">
@@ -10,15 +12,15 @@ function Footer() {
         <nav className="footer-links" aria-label="Footer navigation">
           <div className="footer-col">
             <h4>Shop</h4>
-            <a href="/shop">All Products</a>
-            <a href="/new">New Arrivals</a>
-            <a href="/collections">Collections</a>
+            <Link to="/category/t-shirts">All Products</Link>
+            <Link to="/category/t-shirts">New Arrivals</Link>
+            <Link to="/category/hoodies">Collections</Link>
           </div>
           <div className="footer-col">
             <h4>Help</h4>
-            <a href="/faq">FAQ</a>
-            <a href="/returns">Returns</a>
-            <a href="/contact">Contact</a>
+            <Link to="/">FAQ</Link>
+            <Link to="/">Returns</Link>
+            <Link to="/">Contact</Link>
           </div>
           <div className="footer-col">
             <h4>Follow</h4>
