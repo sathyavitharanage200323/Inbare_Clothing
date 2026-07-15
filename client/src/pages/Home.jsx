@@ -1,7 +1,6 @@
 import "./Home.css";
 
 import AnnouncementBar   from "../components/AnnouncementBar";
-import { CartDrawer }    from "../components/CartDrawer";
 import Hero              from "../components/Hero";
 import Categories        from "../components/Categories";
 import FeaturedToteBag   from "../components/FeaturedToteBag";
@@ -18,7 +17,6 @@ function Home() {
   return (
     <div className="home">
       <AnnouncementBar />
-      <CartDrawer />
       <Hero />
       <Categories />
       <FeaturedToteBag />
