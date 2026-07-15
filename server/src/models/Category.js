@@ -20,8 +20,8 @@ const categorySchema = new mongoose.Schema(
             maxlength: [500, "Description cannot exceed 500 characters"],
         },
         image: {
-            type: String,
-            default: "",
+            type: mongoose.Schema.Types.ObjectId,
+            default: null,
         },
         isActive: {
             type: Boolean,

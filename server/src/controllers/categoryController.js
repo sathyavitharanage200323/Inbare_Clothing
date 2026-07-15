@@ -1,5 +1,6 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
+import { deleteFile } from "../utils/gridfs.js";
 
 export const getCategories = async (req, res, next) => {
     try {
@@ -129,6 +130,10 @@ export const deleteCategory = async (req, res, next) => {
                 success: false,
                 message: "Category not found",
             });
+        }
+
+        if (category.image) {
+            await deleteFile(category.image);
         }
 
         await Category.findByIdAndDelete(req.params.id);
