@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Category from "./src/models/Category.js";
-import Product from "./src/models/Product.js";
-import User from "./src/models/User.js";
+import Category from "../models/Category.js";
+import Product from "../models/Product.js";
+import User from "../models/User.js";
 
 dotenv.config();
 
@@ -58,7 +58,11 @@ async function seed() {
             images: [],
         }));
 
-        const createdProducts = await Product.insertMany(productsWithCategory);
+        const createdProducts = [];
+        for (const p of productsWithCategory) {
+            const created = await Product.create(p);
+            createdProducts.push(created);
+        }
         console.log(`Seeded ${createdProducts.length} products`);
 
         const existingAdmin = await User.findOne({ email: "admin@inbare.com" });
