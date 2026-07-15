@@ -1,4 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+
 function Lookbook() {
+  const navigate = useNavigate();
+
   return (
     <section className="lookbook">
       <img
@@ -23,7 +27,7 @@ function Lookbook() {
           dreamers, and rule breakers.
         </p>
 
-        <button>EXPLORE COLLECTION</button>
+        <button onClick={() => navigate('/category/jackets')}>EXPLORE COLLECTION</button>
       </div>
     </section>
   );

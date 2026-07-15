@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import heroVideo from "../assets/hearo.mp4";
 
 function Hero() {
+  const navigate = useNavigate();
+
   return (
     <section className="hero">
       {/* Video pinned to the right */}
@@ -33,7 +36,7 @@ function Hero() {
           Premium streetwear crafted for those who create their own path.
         </p>
 
-        <button className="shop-btn">SHOP NOW</button>
+        <button className="shop-btn" onClick={() => navigate('/category/t-shirts')}>SHOP NOW</button>
       </div>
     </section>
   );

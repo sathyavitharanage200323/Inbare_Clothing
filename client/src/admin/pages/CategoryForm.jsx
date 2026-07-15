@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import './CategoryForm.css';
 
 export default function CategoryForm({ category, onClose, onSuccess }) {
@@ -90,8 +91,9 @@ export default function CategoryForm({ category, onClose, onSuccess }) {
                     {error && <div className="cf-error">{error}</div>}
 
                     <div className="cf-field">
-                        <label>Name *</label>
+                        <label htmlFor="cf-name">Name *</label>
                         <input
+                            id="cf-name"
                             name="name"
                             value={form.name}
                             onChange={handleChange}
@@ -100,8 +102,9 @@ export default function CategoryForm({ category, onClose, onSuccess }) {
                     </div>
 
                     <div className="cf-field">
-                        <label>Description</label>
+                        <label htmlFor="cf-description">Description</label>
                         <textarea
+                            id="cf-description"
                             name="description"
                             value={form.description}
                             onChange={handleChange}
@@ -115,7 +118,7 @@ export default function CategoryForm({ category, onClose, onSuccess }) {
                         <div className="cf-image-section">
                             {image && (
                                 <div className="cf-image-preview">
-                                    <img src={image} alt="" />
+                                    <img src={imageUrl(image)} alt="" />
                                     <button type="button" className="cf-image-remove" onClick={() => setImage('')}>
                                         <X size={14} />
                                     </button>

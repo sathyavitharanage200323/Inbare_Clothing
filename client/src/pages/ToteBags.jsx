@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingBag, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { CartDrawer } from '../components/CartDrawer';
 import api from '../services/api';
+import { imageUrl } from '../services/imageUrl';
+import { ToteCardSkeleton } from '../components/Skeleton';
 import './ToteBags.css';
 
 function ToteCard({ tote }) {
@@ -13,7 +14,7 @@ function ToteCard({ tote }) {
   const [added, setAdded] = useState(false);
   const [hover, setHover] = useState(false);
 
-  const img = tote.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600';
+  const img = imageUrl(tote.images?.[0]) || 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600';
   const price = tote.discountPrice && tote.discountPrice < tote.price ? tote.discountPrice : tote.price;
 
   function handleAdd() {
@@ -38,14 +39,14 @@ function ToteCard({ tote }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <div className="tb-img-wrap">
+      <Link to={`/product/${tote.slug}`} className="tb-img-wrap">
         <img src={img} alt={tote.name} className="tb-img" />
         <div className="tb-img-overlay" />
-      </div>
+      </Link>
 
       <div className="tb-body">
         <div className="tb-top-row">
-          <h3 className="tb-name">{tote.name}</h3>
+          <Link to={`/product/${tote.slug}`}><h3 className="tb-name">{tote.name}</h3></Link>
           <span className="tb-price">LKR {price.toLocaleString('en-US')}</span>
         </div>
 
@@ -105,9 +106,7 @@ export default function ToteBags() {
   }, []);
 
   return (
-    <>
-      <CartDrawer />
-      <div className="tb-page">
+    <div className="tb-page">
       <div className="tb-hero">
         <div className="tb-hero-content">
           <p className="tb-eyebrow">The Accessory Edit</p>
@@ -128,7 +127,9 @@ export default function ToteBags() {
 
       <section className="tb-grid">
         {loading ? (
-          <p className="tb-total" style={{ textAlign: 'center', gridColumn: '1 / -1' }}>Loading...</p>
+          Array.from({ length: 4 }).map((_, i) => (
+            <ToteCardSkeleton key={i} />
+          ))
         ) : (
           totes.map((t) => (
             <ToteCard key={t._id} tote={t} />
@@ -136,6 +137,5 @@ export default function ToteBags() {
         )}
       </section>
     </div>
-    </>
   );
 }

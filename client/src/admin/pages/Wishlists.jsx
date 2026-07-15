@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Heart, Trash2, Search, X, ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import './Wishlists.css';
 
 export default function Wishlists() {
@@ -108,7 +109,7 @@ export default function Wishlists() {
                                             <div key={product._id} className="admin-wishlists__product">
                                                 <div className="admin-wishlists__product-img">
                                                     {product.images?.[0] ? (
-                                                        <img src={product.images[0]} alt="" />
+                                                        <img src={imageUrl(product.images[0])} alt="" />
                                                     ) : (
                                                         <div className="admin-wishlists__product-img-placeholder">
                                                             <Package size={16} />

@@ -211,6 +211,28 @@
   cursor: not-allowed;
 }
 
+.auth-success-icon {
+  color: var(--success);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.auth-forgot {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.auth-forgot a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.auth-forgot a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 600px) {
   .auth-card {
     padding: 36px 24px;

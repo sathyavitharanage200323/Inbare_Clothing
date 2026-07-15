@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Star, Trash2, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import './Reviews.css';
 
 const RATING_OPTIONS = ['', '1', '2', '3', '4', '5'];
@@ -114,7 +115,7 @@ export default function Reviews() {
 
                                 <div className="admin-reviews__product">
                                     {review.product?.images?.[0] ? (
-                                        <img src={review.product.images[0]} alt="" className="admin-reviews__product-img" />
+                                        <img src={imageUrl(review.product.images[0])} alt="" className="admin-reviews__product-img" />
                                     ) : (
                                         <div className="admin-reviews__product-img admin-reviews__product-img--placeholder" />
                                     )}

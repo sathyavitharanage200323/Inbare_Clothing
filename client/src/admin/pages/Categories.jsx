@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Edit2, Trash2, Eye, EyeOff, Package, X } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import CategoryForm from './CategoryForm';
 import './Categories.css';
 
@@ -91,7 +92,7 @@ export default function Categories() {
                         <div key={cat._id} className={`admin-categories__card ${!cat.isActive ? 'inactive' : ''}`}>
                             <div className="admin-categories__card-img">
                                 {cat.image ? (
-                                    <img src={cat.image} alt={cat.name} />
+                                    <img src={imageUrl(cat.image)} alt={cat.name} />
                                 ) : (
                                     <div className="admin-categories__card-placeholder">
                                         <Package size={32} />

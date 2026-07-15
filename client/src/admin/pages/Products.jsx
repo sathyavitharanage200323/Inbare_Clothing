@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Edit2, Trash2, Eye, EyeOff, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import api from '../../services/api';
+import { imageUrl } from '../../services/imageUrl';
 import ProductForm from './ProductForm';
 import './Products.css';
 
@@ -153,7 +154,7 @@ export default function Products() {
                                         <td className="admin-products__cell-product">
                                             <div className="admin-products__thumb">
                                                 {p.images && p.images[0] ? (
-                                                    <img src={p.images[0]} alt={p.name} />
+                                                    <img src={imageUrl(p.images[0])} alt={p.name} />
                                                 ) : (
                                                     <div className="admin-products__thumb-placeholder" />
                                                 )}

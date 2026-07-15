@@ -83,6 +83,10 @@ function SignIn() {
           </button>
         </form>
 
+        <p className="auth-forgot">
+          <Link to="/forgot-password">Forgot your password?</Link>
+        </p>
+
         <p className="auth-footer">
           Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>

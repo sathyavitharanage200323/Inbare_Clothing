@@ -267,24 +267,24 @@ function UserEditModal({ user, onClose, onSuccess }) {
 
                     <div className="admin-users__form-grid">
                         <div className="admin-users__form-field">
-                            <label>First Name</label>
-                            <input name="firstName" value={form.firstName} onChange={handleChange} />
+                            <label htmlFor="ue-firstName">First Name</label>
+                            <input id="ue-firstName" name="firstName" value={form.firstName} onChange={handleChange} />
                         </div>
                         <div className="admin-users__form-field">
-                            <label>Last Name</label>
-                            <input name="lastName" value={form.lastName} onChange={handleChange} />
+                            <label htmlFor="ue-lastName">Last Name</label>
+                            <input id="ue-lastName" name="lastName" value={form.lastName} onChange={handleChange} />
                         </div>
                         <div className="admin-users__form-field">
-                            <label>Email</label>
-                            <input name="email" type="email" value={form.email} onChange={handleChange} />
+                            <label htmlFor="ue-email">Email</label>
+                            <input id="ue-email" name="email" type="email" value={form.email} onChange={handleChange} />
                         </div>
                         <div className="admin-users__form-field">
-                            <label>Phone</label>
-                            <input name="phone" value={form.phone} onChange={handleChange} />
+                            <label htmlFor="ue-phone">Phone</label>
+                            <input id="ue-phone" name="phone" value={form.phone} onChange={handleChange} />
                         </div>
                         <div className="admin-users__form-field">
-                            <label>Role</label>
-                            <select name="role" value={form.role} onChange={handleChange}>
+                            <label htmlFor="ue-role">Role</label>
+                            <select id="ue-role" name="role" value={form.role} onChange={handleChange}>
                                 <option value="customer">Customer</option>
                                 <option value="admin">Admin</option>
                             </select>
