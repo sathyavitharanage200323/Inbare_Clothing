@@ -1,10 +1,25 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { CartDrawer } from '../components/CartDrawer';
+import { imageUrl } from '../services/imageUrl';
 import api from '../services/api';
+import { SearchResultsSkeleton } from '../components/Skeleton';
 import './SearchResults.css';
+
+const COLOR_MAP = {
+  black: '#111', white: '#f5f5f5', navy: '#1a2744', gray: '#888',
+  grey: '#888', brown: '#7b4f2e', beige: '#d4b896', red: '#d32f2f',
+  green: '#2e7d32', blue: '#1565c0', cream: '#f5f0e8', pink: '#e91e8c',
+  orange: '#e65100', yellow: '#f9a825', purple: '#6a1b9a', khaki: '#b5a642',
+  'burnt clay': '#8b4513', 'forest green': '#228b22', 'navy blue': '#1a2744',
+  'light ash': '#c9c9c9', ash: '#b0b0b0', maroon: '#800000', olive: '#808000',
+  teal: '#008080', coral: '#ff6b6b', lavender: '#967bb6',
+};
+
+function getSwatchColor(name) {
+  return COLOR_MAP[name.toLowerCase()] || '#ccc';
+}
 
 function ProductCard({ product }) {
   const { addToCart, setCartOpen } = useCart();
@@ -18,7 +33,7 @@ function ProductCard({ product }) {
   );
   const [added, setAdded] = useState(false);
 
-  const displayImg = product.images?.[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600';
+  const displayImg = imageUrl(product.images?.[0]) || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600';
   const price = product.discountPrice && product.discountPrice < product.price ? product.discountPrice : product.price;
   const categoryName = product.category?.name || '';
 
@@ -41,13 +56,13 @@ function ProductCard({ product }) {
 
   return (
     <div className="sr-card">
-      <div className="sr-img-wrap">
+      <Link to={`/product/${product.slug}`} className="sr-img-wrap">
         <img src={displayImg} alt={product.name} className="sr-img-fade" />
-      </div>
+      </Link>
 
       <div className="sr-info">
         <div className="sr-top">
-          <h3>{product.name}</h3>
+          <Link to={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
           {categoryName && <p className="sr-category">{categoryName}</p>}
         </div>
         <p className="sr-price">LKR {price.toLocaleString('en-US')}</p>
@@ -60,6 +75,7 @@ function ProductCard({ product }) {
                 <button
                   key={c.label}
                   className={`sr-color-swatch ${selectedColor?.label === c.label ? 'active' : ''}`}
+                  style={{ backgroundColor: getSwatchColor(c.label) }}
                   onClick={() => setSelectedColor(c)}
                   aria-label={c.label}
                 />
@@ -117,9 +133,7 @@ export default function SearchResults() {
   }, [query]);
 
   return (
-    <>
-      <CartDrawer />
-      <div className="sr-page">
+    <div className="sr-page">
         <div className="sr-header">
           <button className="sr-back" onClick={() => navigate(-1)}>
             <ArrowLeft size={18} strokeWidth={2} /> Back
@@ -137,7 +151,7 @@ export default function SearchResults() {
         {!query ? (
           <p className="sr-empty">Enter a search term to find products.</p>
         ) : loading ? (
-          <p className="sr-empty">Searching...</p>
+          <SearchResultsSkeleton />
         ) : results.length === 0 ? (
           <div className="sr-no-results">
             <p>No products found for "{query}"</p>
@@ -151,6 +165,5 @@ export default function SearchResults() {
           </div>
         )}
       </div>
-    </>
   );
 }
