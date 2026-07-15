@@ -10,8 +10,9 @@ import config from "./config/env.js";
 import swaggerSpec from "./config/swagger.js";
 import sanitize from "./middleware/sanitize.js";
 import requestLogger from "./middleware/requestLogger.js";
-import { apiLimiter, authLimiter } from "./middleware/rateLimiter.js";
+import { apiLimiter, authLimiter, cartLimiter } from "./middleware/rateLimiter.js";
 
+import "./models/Coupon.js";
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -20,8 +21,10 @@ import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import imageRoutes from "./routes/imageRoutes.js";
 
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -65,14 +68,16 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/health", healthRoutes);
+app.use("/api/images", imageRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/cart", cartRoutes);
+app.use("/api/cart", cartLimiter, cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/coupons", couponRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
