@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
+import { imageUrl } from '../services/imageUrl';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
@@ -8,7 +10,7 @@ function normalizeServerItem(item) {
         productId: item.product?._id || item.product,
         name: item.product?.name || item.name,
         price: item.price,
-        img: item.product?.images?.[0] || item.image || '',
+        img: imageUrl(item.product?.images?.[0]) || item.image || '',
         selectedColor: item.color || '',
         selectedSize: item.size || '',
         qty: item.quantity,
@@ -19,14 +21,35 @@ export function CartProvider({ children }) {
     const [cartOpen, setCartOpen] = useState(false);
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { user, setFetchCart } = useAuth();
 
     const fetchCart = useCallback(async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             const saved = localStorage.getItem('guestCart');
             setItems(saved ? JSON.parse(saved) : []);
             return;
         }
+
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        if (guestCart.length > 0) {
+            for (const item of guestCart) {
+                try {
+                    const color = typeof item.selectedColor === 'object'
+                        ? (item.selectedColor?.label || '')
+                        : (item.selectedColor || '');
+                    await api.post('/cart/add', {
+                        productId: item.productId,
+                        quantity: item.qty || 1,
+                        size: item.selectedSize || '',
+                        color,
+                    });
+                } catch {
+                    // skip failed item
+                }
+            }
+            localStorage.removeItem('guestCart');
+        }
+
         try {
             const res = await api.get('/cart');
             const raw = res.data.cart.items || [];
@@ -34,21 +57,24 @@ export function CartProvider({ children }) {
         } catch {
             setItems([]);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         fetchCart();
     }, [fetchCart]);
 
     useEffect(() => {
-        if (!localStorage.getItem('token')) {
+        setFetchCart(fetchCart);
+    }, [setFetchCart, fetchCart]);
+
+    useEffect(() => {
+        if (!user) {
             localStorage.setItem('guestCart', JSON.stringify(items));
         }
-    }, [items]);
+    }, [items, user]);
 
     async function addToCart(product) {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             setItems((prev) => {
                 const existing = prev.find(
                     (item) => item.productId === product.productId && item.selectedColor === product.selectedColor && item.selectedSize === product.selectedSize
@@ -81,8 +107,7 @@ export function CartProvider({ children }) {
     }
 
     async function removeFromCart(productId, selectedColor, selectedSize) {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             setItems((prev) => prev.filter(
                 (item) => !(item.productId === productId && item.selectedColor === selectedColor && item.selectedSize === selectedSize)
             ));
@@ -103,8 +128,7 @@ export function CartProvider({ children }) {
             removeFromCart(productId, selectedColor, selectedSize);
             return;
         }
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             setItems((prev) =>
                 prev.map((item) =>
                     item.productId === productId && item.selectedColor === selectedColor && item.selectedSize === selectedSize
@@ -125,8 +149,7 @@ export function CartProvider({ children }) {
     }
 
     async function clearCart() {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             setItems([]);
             return;
         }
