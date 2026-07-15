@@ -17,14 +17,12 @@ const config = {
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRE: process.env.JWT_EXPIRE || "7d",
     CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:5173",
-    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
-    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
-    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
     SMTP_HOST: process.env.SMTP_HOST || "",
     SMTP_PORT: parseInt(process.env.SMTP_PORT, 10) || 587,
     SMTP_USER: process.env.SMTP_USER || "",
     SMTP_PASS: process.env.SMTP_PASS || "",
     EMAIL_FROM: process.env.EMAIL_FROM || "noreply@inbare.com",
+    CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
 };
 
 export default config;

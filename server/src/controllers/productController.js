@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import { deleteFile } from "../utils/gridfs.js";
 
 export const getProducts = async (req, res, next) => {
     try {
@@ -127,7 +128,7 @@ export const updateProduct = async (req, res, next) => {
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id,
             { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive },
-            { new: true, runValidators: true }
+            { new: true, runValidators: true, context: 'query' }
         );
 
         res.status(200).json({
@@ -149,6 +150,10 @@ export const deleteProduct = async (req, res, next) => {
                 success: false,
                 message: "Product not found",
             });
+        }
+
+        for (const imageId of product.images) {
+            await deleteFile(imageId);
         }
 
         await Product.findByIdAndDelete(req.params.id);

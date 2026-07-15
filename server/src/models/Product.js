@@ -29,14 +29,23 @@ const productSchema = new mongoose.Schema(
             min: [0, "Discount price cannot be negative"],
             validate: {
                 validator: function (value) {
-                    return value < this.price;
+                    // value of 0 means no discount — always valid
+                    if (value === 0) return true;
+                    // In document context (save/create), this.price is available
+                    // In query context (findByIdAndUpdate), use this.getUpdate()
+                    const price =
+                        this.price !== undefined
+                            ? this.price
+                            : this.getUpdate?.()?.price;
+                    if (price === undefined) return true; // can't compare, skip
+                    return value < price;
                 },
                 message: "Discount price must be less than regular price",
             },
         },
         images: [
             {
-                type: String,
+                type: mongoose.Schema.Types.ObjectId,
             },
         ],
         category: {
