@@ -22,7 +22,6 @@ const sendTokenResponse = (user, statusCode, res, message) => {
         .json({
             success: true,
             message,
-            token,
             user: {
                 _id: user._id,
                 firstName: user.firstName,
