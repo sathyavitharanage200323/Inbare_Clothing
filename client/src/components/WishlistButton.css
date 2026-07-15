@@ -1,0 +1,27 @@
+.wl-btn {
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  backdrop-filter: blur(4px);
+}
+
+.wl-btn:hover {
+  background: rgba(0,0,0,0.6);
+  transform: scale(1.1);
+}
+
+.wl-btn.active {
+  color: #ef4444;
+}
+
+.wl-btn.active:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
