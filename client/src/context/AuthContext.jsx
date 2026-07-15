@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -6,11 +6,15 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const fetchCartRef = useRef(null);
+
+    function setFetchCart(fn) {
+        fetchCartRef.current = fn;
+    }
 
     useEffect(() => {
         const stored = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-        if (stored && token) {
+        if (stored) {
             setUser(JSON.parse(stored));
             api.get('/auth/me')
                 .then((res) => {
@@ -18,7 +22,6 @@ export function AuthProvider({ children }) {
                     localStorage.setItem('user', JSON.stringify(res.data.user));
                 })
                 .catch(() => {
-                    localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     setUser(null);
                 })
@@ -30,25 +33,24 @@ export function AuthProvider({ children }) {
 
     async function login(email, password) {
         const res = await api.post('/auth/login', { email, password });
-        const { token, user: userData } = res.data;
-        localStorage.setItem('token', token);
+        const { user: userData } = res.data;
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
+        fetchCartRef.current?.();
         return res.data;
     }
 
     async function register(firstName, lastName, email, password) {
         const res = await api.post('/auth/register', { firstName, lastName, email, password });
-        const { token, user: userData } = res.data;
-        localStorage.setItem('token', token);
+        const { user: userData } = res.data;
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
+        fetchCartRef.current?.();
         return res.data;
     }
 
     async function logout() {
         await api.post('/auth/logout').catch(() => {});
-        localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
     }
@@ -60,8 +62,18 @@ export function AuthProvider({ children }) {
         return res.data;
     }
 
+    async function forgotPassword(email) {
+        const res = await api.post('/auth/forgot-password', { email });
+        return res.data;
+    }
+
+    async function resetPassword(token, password) {
+        const res = await api.put(`/auth/reset-password/${token}`, { password });
+        return res.data;
+    }
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile, setFetchCart, forgotPassword, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );
