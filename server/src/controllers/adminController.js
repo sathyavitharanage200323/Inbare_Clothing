@@ -2,35 +2,36 @@ import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
 import Category from "../models/Category.js";
+import { fn, col, Op } from "sequelize";
 
 export const getDashboardStats = async (req, res, next) => {
     try {
-        const [totalProducts, totalUsers, totalCategories, totalOrders, revenueResult, recentOrders, ordersByStatus, lowStockProducts] = await Promise.all([
-            Product.countDocuments(),
-            User.countDocuments({ role: "customer" }),
-            Category.countDocuments(),
-            Order.countDocuments(),
-            Order.aggregate([
-                { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-            ]),
-            Order.find()
-                .populate("user", "firstName lastName email")
-                .sort({ createdAt: -1 })
-                .limit(5),
-            Order.aggregate([
-                { $group: { _id: "$orderStatus", count: { $sum: 1 } } },
-            ]),
-            Product.find({ stock: { $lte: 10 } })
-                .select("name stock price")
-                .sort({ stock: 1 })
-                .limit(5),
+        const [totalProducts, totalUsers, totalCategories, totalOrders, totalRevenue, recentOrders, ordersByStatus, lowStockProducts] = await Promise.all([
+            Product.count(),
+            User.count({ where: { role: "customer" } }),
+            Category.count(),
+            Order.count(),
+            Order.sum('totalAmount'),
+            Order.findAll({
+                include: [{ model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }],
+                order: [['createdAt', 'DESC']],
+                limit: 5,
+            }),
+            Order.findAll({
+                attributes: ['orderStatus', [fn('COUNT', col('id')), 'count']],
+                group: ['orderStatus'],
+            }),
+            Product.findAll({
+                where: { stock: { [Op.lte]: 10 } },
+                attributes: ['id', 'name', 'stock', 'price'],
+                order: [['stock', 'ASC']],
+                limit: 5,
+            }),
         ]);
-
-        const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
 
         const statusMap = {};
         ordersByStatus.forEach((s) => {
-            statusMap[s._id] = s.count;
+            statusMap[s.orderStatus] = Number(s.get('count'));
         });
 
         res.status(200).json({
@@ -40,7 +41,7 @@ export const getDashboardStats = async (req, res, next) => {
                 totalUsers,
                 totalCategories,
                 totalOrders,
-                totalRevenue,
+                totalRevenue: totalRevenue || 0,
                 recentOrders,
                 ordersByStatus: statusMap,
                 lowStockProducts,
