@@ -7,12 +7,12 @@ const generateToken = (id) => {
 };
 
 const sendTokenResponse = (user, statusCode, res, message) => {
-    const token = generateToken(user._id);
+    const token = generateToken(user.id);
 
     const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
@@ -23,7 +23,7 @@ const sendTokenResponse = (user, statusCode, res, message) => {
             success: true,
             message,
             user: {
-                _id: user._id,
+                _id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,

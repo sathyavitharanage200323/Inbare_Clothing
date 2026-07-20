@@ -4,20 +4,20 @@ const errorHandler = (err, req, res, next) => {
 
     console.error(err.stack);
 
-    if (err.name === "CastError") {
-        error.message = "Resource not found";
-        return res.status(404).json({ success: false, message: error.message });
+    if (err.name === "SequelizeValidationError") {
+        const messages = err.errors.map((val) => val.message);
+        return res.status(400).json({ success: false, message: messages.join(", ") });
     }
 
-    if (err.code === 11000) {
-        const field = Object.keys(err.keyValue)[0];
+    if (err.name === "SequelizeUniqueConstraintError") {
+        const field = err.errors[0]?.path || "field";
         error.message = `Duplicate value for field: ${field}`;
         return res.status(400).json({ success: false, message: error.message });
     }
 
-    if (err.name === "ValidationError") {
-        const messages = Object.values(err.errors).map((val) => val.message);
-        return res.status(400).json({ success: false, message: messages.join(", ") });
+    if (err.name === "SequelizeDatabaseError") {
+        error.message = "Invalid data provided";
+        return res.status(400).json({ success: false, message: error.message });
     }
 
     if (err.name === "JsonWebTokenError") {
