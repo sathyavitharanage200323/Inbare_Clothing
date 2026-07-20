@@ -1,58 +1,70 @@
-import mongoose from "mongoose";
-import { GridFSBucket, ObjectId } from "mongodb";
-import { Readable } from "stream";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const BUCKET_NAME = "images";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const UPLOAD_DIR = path.join(__dirname, "../../uploads");
 
-function getBucket() {
-    const db = mongoose.connection.db;
-    if (!db) throw new Error("Database not connected");
-    return new GridFSBucket(db, { bucketName: BUCKET_NAME });
+// Ensure upload directory exists
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
 export async function uploadFile(file) {
-    const bucket = getBucket();
     const filename = `${Date.now()}-${file.originalname}`;
+    const filepath = path.join(UPLOAD_DIR, filename);
 
     return new Promise((resolve, reject) => {
-        const uploadStream = bucket.openUploadStream(filename, {
-            contentType: file.mimetype,
-            metadata: { originalName: file.originalname },
+        fs.writeFile(filepath, file.buffer, (err) => {
+            if (err) return reject(err);
+            resolve(filename); // Return filename as ID
         });
-
-        uploadStream.on("error", reject);
-        uploadStream.on("finish", () => resolve(uploadStream.id));
-
-        Readable.from(file.buffer).pipe(uploadStream);
     });
 }
 
 export async function downloadFile(fileId) {
-    const bucket = getBucket();
-    const id = new ObjectId(fileId);
+    const filepath = path.join(UPLOAD_DIR, fileId);
 
-    const filesCollection = mongoose.connection.db.collection(`${BUCKET_NAME}.files`);
-    const fileDoc = await filesCollection.findOne({ _id: id });
-    if (!fileDoc) return null;
+    if (!fs.existsSync(filepath)) {
+        return null;
+    }
 
-    const downloadStream = bucket.openDownloadStream(id);
+    const stats = fs.statSync(filepath);
+    const stream = fs.createReadStream(filepath);
+
+    // Try to determine content type from extension
+    const ext = path.extname(fileId).toLowerCase();
+    const contentTypeMap = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.svg': 'image/svg+xml'
+    };
 
     return {
-        stream: downloadStream,
-        contentType: fileDoc.contentType || "application/octet-stream",
-        filename: fileDoc.filename,
-        size: fileDoc.length,
+        stream: stream,
+        contentType: contentTypeMap[ext] || 'application/octet-stream',
+        filename: fileId,
+        size: stats.size
     };
 }
 
 export async function deleteFile(fileId) {
-    const bucket = getBucket();
-    const id = new ObjectId(fileId);
+    const filepath = path.join(UPLOAD_DIR, fileId);
 
-    try {
-        await bucket.delete(id);
-    } catch (err) {
-        if (err.code === "ENOENT" || err.message?.includes("FileNotFound")) return;
-        throw err;
-    }
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(filepath)) {
+            return resolve(); // File doesn't exist, consider it deleted
+        }
+
+        fs.unlink(filepath, (err) => {
+            if (err && err.code !== 'ENOENT') {
+                return reject(err);
+            }
+            resolve();
+        });
+    });
 }
