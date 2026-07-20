@@ -1,99 +1,137 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
 import bcrypt from "bcrypt";
+import { sequelize } from "../config/database.js";
 
-const userSchema = new mongoose.Schema(
-    {
-        firstName: {
-            type: String,
-            required: [true, "First name is required"],
-            trim: true,
-            maxlength: [50, "First name cannot exceed 50 characters"],
-        },
-        lastName: {
-            type: String,
-            required: [true, "Last name is required"],
-            trim: true,
-            maxlength: [50, "Last name cannot exceed 50 characters"],
-        },
-        email: {
-            type: String,
-            required: [true, "Email is required"],
-            unique: true,
-            lowercase: true,
-            trim: true,
-            match: [
-                /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-                "Please enter a valid email",
-            ],
-        },
-        password: {
-            type: String,
-            required: [true, "Password is required"],
-            minlength: [6, "Password must be at least 6 characters"],
-            select: false,
-        },
-        role: {
-            type: String,
-            enum: ["customer", "admin"],
-            default: "customer",
-        },
-        phone: {
-            type: String,
-            trim: true,
-        },
-        avatar: {
-            type: String,
-            default: "",
-        },
-        address: {
-            street: { type: String, trim: true },
-            city: { type: String, trim: true },
-            state: { type: String, trim: true },
-            zipCode: { type: String, trim: true },
-            country: { type: String, trim: true, default: "Sri Lanka" },
-        },
-        isEmailVerified: {
-            type: Boolean,
-            default: false,
-        },
-        emailVerificationToken: {
-            type: String,
-            select: false,
-        },
-        emailVerificationExpires: {
-            type: Date,
-            select: false,
-        },
-        passwordResetToken: {
-            type: String,
-            select: false,
-        },
-        passwordResetExpires: {
-            type: Date,
-            select: false,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    {
-        timestamps: true,
+    firstName: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: "First name is required" },
+            len: { args: [1, 50], msg: "First name cannot exceed 50 characters" }
+        }
+    },
+    lastName: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: "Last name is required" },
+            len: { args: [1, 50], msg: "Last name cannot exceed 50 characters" }
+        }
+    },
+    email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: { msg: "Please enter a valid email" }
+        },
+        set(value) {
+            this.setDataValue('email', value.toLowerCase().trim());
+        }
+    },
+    password: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+            len: { args: [6, 255], msg: "Password must be at least 6 characters" }
+        }
+    },
+    role: {
+        type: DataTypes.ENUM('customer', 'admin'),
+        defaultValue: 'customer'
+    },
+    phone: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+    },
+    avatar: {
+        type: DataTypes.STRING(255),
+        defaultValue: ''
+    },
+    street: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    city: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    state: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    zipCode: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+    },
+    country: {
+        type: DataTypes.STRING(100),
+        defaultValue: 'Sri Lanka'
+    },
+    isEmailVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    emailVerificationToken: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    emailVerificationExpires: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    passwordResetToken: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    passwordResetExpires: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    _id: {
+        type: DataTypes.VIRTUAL,
+        get() { return this.id; }
+    },
+    address: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return {
+                street: this.street,
+                city: this.city,
+                state: this.state,
+                zipCode: this.zipCode,
+                country: this.country,
+            };
+        }
     }
-);
-
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 12);
-    next();
+}, {
+    tableName: 'users',
+    timestamps: true,
+    indexes: [
+        { fields: ['email'] },
+        { fields: ['role'] }
+    ],
+    hooks: {
+        beforeSave: async (user) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 12);
+            }
+        }
+    }
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
+User.prototype.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
-
-userSchema.index({ role: 1 });
-
-const User = mongoose.model("User", userSchema);
 
 export default User;
