@@ -4,13 +4,14 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 import Coupon from "../models/Coupon.js";
 import { sendOrderConfirmation } from "../utils/email.js";
+import { sequelize } from "../config/database.js";
 
 export const createOrder = async (req, res, next) => {
     try {
         const { shippingAddress, paymentMethod, note, couponCode } = req.body;
 
-        const cart = await Cart.findOne({ user: req.user._id });
-        if (!cart || cart.items.length === 0) {
+        const cart = await Cart.findOne({ where: { userId: req.user.id } });
+        if (!cart || !cart.items || cart.items.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: "Cart is empty",
@@ -18,7 +19,7 @@ export const createOrder = async (req, res, next) => {
         }
 
         for (const item of cart.items) {
-            const product = await Product.findById(item.product);
+            const product = await Product.findByPk(item.product);
             if (!product) {
                 return res.status(404).json({
                     success: false,
@@ -38,7 +39,7 @@ export const createOrder = async (req, res, next) => {
         let appliedCouponCode = null;
 
         if (couponCode) {
-            const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+            const coupon = await Coupon.findOne({ where: { code: couponCode.toUpperCase() } });
             if (!coupon || !coupon.isActive) {
                 return res.status(400).json({
                     success: false,
@@ -77,7 +78,7 @@ export const createOrder = async (req, res, next) => {
         }
 
         const order = await Order.create({
-            user: req.user._id,
+            userId: req.user.id,
             items: cart.items.map((item) => ({
                 product: item.product,
                 name: item.name,
@@ -87,7 +88,11 @@ export const createOrder = async (req, res, next) => {
                 color: item.color,
                 quantity: item.quantity,
             })),
-            shippingAddress,
+            street: shippingAddress.street,
+            city: shippingAddress.city,
+            state: shippingAddress.state,
+            zipCode: shippingAddress.zipCode,
+            country: shippingAddress.country || 'Sri Lanka',
             paymentMethod,
             totalAmount,
             note,
@@ -96,25 +101,22 @@ export const createOrder = async (req, res, next) => {
         });
 
         for (const item of cart.items) {
-            const result = await Product.findOneAndUpdate(
-                { _id: item.product, stock: { $gte: item.quantity } },
-                { $inc: { stock: -item.quantity } },
-                { new: true }
-            );
-
-            if (!result) {
-                await Order.findByIdAndDelete(order._id);
+            const product = await Product.findByPk(item.product);
+            if (!product || product.stock < item.quantity) {
+                await order.destroy();
                 return res.status(400).json({
                     success: false,
                     message: `Insufficient stock for ${item.name}`,
                 });
             }
+            await product.update({
+                stock: sequelize.literal('stock - ' + item.quantity)
+            });
         }
 
-        cart.items = [];
-        await cart.save();
+        await cart.update({ items: [] });
 
-        const orderUser = await User.findById(req.user._id);
+        const orderUser = await User.findByPk(req.user.id);
         if (orderUser) sendOrderConfirmation(order, orderUser);
 
         res.status(201).json({
@@ -131,11 +133,13 @@ export const getMyOrders = async (req, res, next) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        const total = await Order.countDocuments({ user: req.user._id });
-        const orders = await Order.find({ user: req.user._id })
-            .sort({ createdAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const total = await Order.count({ where: { userId: req.user.id } });
+        const orders = await Order.findAll({
+            where: { userId: req.user.id },
+            order: [['createdAt', 'DESC']],
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -152,10 +156,9 @@ export const getMyOrders = async (req, res, next) => {
 
 export const getOrder = async (req, res, next) => {
     try {
-        const order = await Order.findById(req.params.id).populate(
-            "user",
-            "firstName lastName email"
-        );
+        const order = await Order.findByPk(req.params.id, {
+            include: [{ model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }]
+        });
 
         if (!order) {
             return res.status(404).json({
@@ -164,10 +167,7 @@ export const getOrder = async (req, res, next) => {
             });
         }
 
-        if (
-            order.user._id.toString() !== req.user._id.toString() &&
-            req.user.role !== "admin"
-        ) {
+        if (order.userId !== req.user.id && req.user.role !== "admin") {
             return res.status(403).json({
                 success: false,
                 message: "Not authorized to view this order",
@@ -187,15 +187,17 @@ export const getAllOrders = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, status } = req.query;
 
-        const query = {};
-        if (status) query.orderStatus = status;
+        const where = {};
+        if (status) where.orderStatus = status;
 
-        const total = await Order.countDocuments(query);
-        const orders = await Order.find(query)
-            .populate("user", "firstName lastName email")
-            .sort({ createdAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const total = await Order.count({ where });
+        const orders = await Order.findAll({
+            where,
+            include: [{ model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email'] }],
+            order: [['createdAt', 'DESC']],
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -214,7 +216,7 @@ export const updateOrderStatus = async (req, res, next) => {
     try {
         const { orderStatus, paymentStatus } = req.body;
 
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findByPk(req.params.id);
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -222,10 +224,10 @@ export const updateOrderStatus = async (req, res, next) => {
             });
         }
 
-        if (orderStatus) order.orderStatus = orderStatus;
-        if (paymentStatus) order.paymentStatus = paymentStatus;
-
-        await order.save();
+        const updates = {};
+        if (orderStatus) updates.orderStatus = orderStatus;
+        if (paymentStatus) updates.paymentStatus = paymentStatus;
+        await order.update(updates);
 
         res.status(200).json({
             success: true,
@@ -239,7 +241,7 @@ export const updateOrderStatus = async (req, res, next) => {
 
 export const cancelOrder = async (req, res, next) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findByPk(req.params.id);
 
         if (!order) {
             return res.status(404).json({
@@ -248,10 +250,7 @@ export const cancelOrder = async (req, res, next) => {
             });
         }
 
-        if (
-            order.user.toString() !== req.user._id.toString() &&
-            req.user.role !== "admin"
-        ) {
+        if (order.userId !== req.user.id && req.user.role !== "admin") {
             return res.status(403).json({
                 success: false,
                 message: "Not authorized to cancel this order",
@@ -266,13 +265,15 @@ export const cancelOrder = async (req, res, next) => {
         }
 
         for (const item of order.items) {
-            await Product.findByIdAndUpdate(item.product, {
-                $inc: { stock: item.quantity },
-            });
+            const product = await Product.findByPk(item.product);
+            if (product) {
+                await product.update({
+                    stock: sequelize.literal('stock + ' + item.quantity)
+                });
+            }
         }
 
-        order.orderStatus = "cancelled";
-        await order.save();
+        await order.update({ orderStatus: "cancelled" });
 
         res.status(200).json({
             success: true,
