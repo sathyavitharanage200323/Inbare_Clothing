@@ -1,51 +1,65 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const couponSchema = new mongoose.Schema(
-    {
-        code: {
-            type: String,
-            required: [true, "Coupon code is required"],
-            unique: true,
-            uppercase: true,
-            trim: true,
-        },
-        discountType: {
-            type: String,
-            enum: ["percent", "fixed"],
-            required: true,
-        },
-        discountValue: {
-            type: Number,
-            required: true,
-            min: [0, "Discount value must be positive"],
-        },
-        minOrderAmount: {
-            type: Number,
-            default: 0,
-        },
-        maxUses: {
-            type: Number,
-            default: null,
-        },
-        usedCount: {
-            type: Number,
-            default: 0,
-        },
-        expiresAt: {
-            type: Date,
-            default: null,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+const Coupon = sequelize.define('Coupon', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    { timestamps: true }
-);
-
-couponSchema.index({ code: 1 });
-couponSchema.index({ isActive: 1, expiresAt: 1 });
-
-const Coupon = mongoose.model("Coupon", couponSchema);
+    code: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: { msg: "Coupon code is required" }
+        },
+        set(value) {
+            this.setDataValue('code', value.toUpperCase().trim());
+        }
+    },
+    discountType: {
+        type: DataTypes.ENUM('percent', 'fixed'),
+        allowNull: false
+    },
+    discountValue: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+            min: { args: [0], msg: "Discount value must be positive" }
+        }
+    },
+    minOrderAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0
+    },
+    maxUses: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    usedCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    expiresAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    _id: {
+        type: DataTypes.VIRTUAL,
+        get() { return this.id; }
+    }
+}, {
+    tableName: 'coupons',
+    timestamps: true,
+    indexes: [
+        { fields: ['code'], unique: true },
+        { fields: ['isActive', 'expiresAt'] }
+    ]
+});
 
 export default Coupon;
