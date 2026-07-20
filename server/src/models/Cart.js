@@ -1,70 +1,53 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const cartItemSchema = new mongoose.Schema(
-    {
-        product: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
-            required: true,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        price: {
-            type: Number,
-            required: true,
-        },
-        image: {
-            type: String,
-            default: "",
-        },
-        size: {
-            type: String,
-            default: "",
-        },
-        color: {
-            type: String,
-            default: "",
-        },
-        quantity: {
-            type: Number,
-            required: true,
-            min: [1, "Quantity must be at least 1"],
-            default: 1,
-        },
+const Cart = sequelize.define('Cart', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    { _id: false }
-);
-
-const cartSchema = new mongoose.Schema(
-    {
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-            unique: true,
-        },
-        items: [cartItemSchema],
-        totalAmount: {
-            type: Number,
-            default: 0,
-            min: [0, "Total cannot be negative"],
-        },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+        references: {
+            model: 'users',
+            key: 'id'
+        }
     },
-    {
-        timestamps: true,
+    items: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: []
+    },
+    totalAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0,
+        validate: {
+            min: { args: [0], msg: "Total cannot be negative" }
+        }
+    },
+    _id: {
+        type: DataTypes.VIRTUAL,
+        get() { return this.id; }
     }
-);
-
-cartSchema.pre("save", function (next) {
-    this.totalAmount = this.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-    );
-    next();
+}, {
+    tableName: 'carts',
+    timestamps: true,
+    indexes: [
+        { fields: ['userId'], unique: true }
+    ],
+    hooks: {
+        beforeSave: (cart) => {
+            if (cart.items && Array.isArray(cart.items)) {
+                cart.totalAmount = cart.items.reduce(
+                    (total, item) => total + (item.price * item.quantity),
+                    0
+                );
+            }
+        }
+    }
 });
-
-const Cart = mongoose.model("Cart", cartSchema);
 
 export default Cart;
