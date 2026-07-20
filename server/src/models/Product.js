@@ -1,116 +1,123 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const productSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: [true, "Product name is required"],
-            trim: true,
-            maxlength: [200, "Product name cannot exceed 200 characters"],
-        },
-        slug: {
-            type: String,
-            unique: true,
-            lowercase: true,
-        },
-        description: {
-            type: String,
-            required: [true, "Product description is required"],
-            maxlength: [2000, "Description cannot exceed 2000 characters"],
-        },
-        price: {
-            type: Number,
-            required: [true, "Product price is required"],
-            min: [0, "Price cannot be negative"],
-        },
-        discountPrice: {
-            type: Number,
-            default: 0,
-            min: [0, "Discount price cannot be negative"],
-            validate: {
-                validator: function (value) {
-                    // value of 0 means no discount — always valid
-                    if (value === 0) return true;
-                    // In document context (save/create), this.price is available
-                    // In query context (findByIdAndUpdate), use this.getUpdate()
-                    const price =
-                        this.price !== undefined
-                            ? this.price
-                            : this.getUpdate?.()?.price;
-                    if (price === undefined) return true; // can't compare, skip
-                    return value < price;
-                },
-                message: "Discount price must be less than regular price",
-            },
-        },
-        images: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-            },
-        ],
-        category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Category",
-            required: [true, "Product category is required"],
-        },
-        colors: [
-            {
-                type: String,
-                trim: true,
-            },
-        ],
-        sizes: [
-            {
-                type: String,
-                trim: true,
-            },
-        ],
-        stock: {
-            type: Number,
-            required: [true, "Stock quantity is required"],
-            min: [0, "Stock cannot be negative"],
-            default: 0,
-        },
-        isFeatured: {
-            type: Boolean,
-            default: false,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
-        averageRating: {
-            type: Number,
-            default: 0,
-            min: [0, "Rating cannot be less than 0"],
-            max: [5, "Rating cannot exceed 5"],
-        },
-        numReviews: {
-            type: Number,
-            default: 0,
-        },
+const Product = sequelize.define('Product', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    {
-        timestamps: true,
+    name: {
+        type: DataTypes.STRING(200),
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: "Product name is required" },
+            len: { args: [1, 200], msg: "Product name cannot exceed 200 characters" }
+        }
+    },
+    slug: {
+        type: DataTypes.STRING(250),
+        unique: true
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: "Product description is required" },
+            len: { args: [1, 2000], msg: "Description cannot exceed 2000 characters" }
+        }
+    },
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+            min: { args: [0], msg: "Price cannot be negative" }
+        }
+    },
+    discountPrice: {
+        type: DataTypes.DECIMAL(10, 2),
+        defaultValue: 0,
+        validate: {
+            min: { args: [0], msg: "Discount price cannot be negative" },
+            isLessThanPrice(value) {
+                if (value > 0 && value >= this.price) {
+                    throw new Error('Discount price must be less than regular price');
+                }
+            }
+        }
+    },
+    images: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
+    categoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'categories',
+            key: 'id'
+        }
+    },
+    colors: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
+    sizes: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
+    stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+            min: { args: [0], msg: "Stock cannot be negative" }
+        }
+    },
+    isFeatured: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    averageRating: {
+        type: DataTypes.DECIMAL(2, 1),
+        defaultValue: 0,
+        validate: {
+            min: { args: [0], msg: "Rating cannot be less than 0" },
+            max: { args: [5], msg: "Rating cannot exceed 5" }
+        }
+    },
+    numReviews: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    _id: {
+        type: DataTypes.VIRTUAL,
+        get() { return this.id; }
     }
-);
-
-productSchema.pre("save", function (next) {
-    if (this.isModified("name")) {
-        this.slug = this.name
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "");
+}, {
+    tableName: 'products',
+    timestamps: true,
+    indexes: [
+        { fields: ['categoryId'] },
+        { fields: ['price'] },
+        { fields: ['isFeatured'] },
+        { fields: ['isActive'] },
+        { fields: ['slug'] }
+    ],
+    hooks: {
+        beforeSave: (product) => {
+            if (product.changed('name')) {
+                product.slug = product.name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/(^-|-$)/g, "");
+            }
+        }
     }
-    next();
 });
-
-productSchema.index({ category: 1 });
-productSchema.index({ price: 1 });
-productSchema.index({ isFeatured: 1 });
-productSchema.index({ isActive: 1 });
-productSchema.index({ name: "text", description: "text" });
-
-const Product = mongoose.model("Product", productSchema);
 
 export default Product;
