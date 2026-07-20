@@ -1,5 +1,6 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
+import { fn, col, literal } from "sequelize";
 import { deleteFile } from "../utils/gridfs.js";
 
 export const getCategories = async (req, res, next) => {
@@ -7,28 +8,18 @@ export const getCategories = async (req, res, next) => {
         const { withCount } = req.query;
 
         if (withCount === "true") {
-            const categories = await Category.aggregate([
-                { $sort: { createdAt: -1 } },
-                {
-                    $lookup: {
-                        from: "products",
-                        localField: "_id",
-                        foreignField: "category",
-                        as: "products",
-                    },
+            const categories = await Category.findAll({
+                order: [['createdAt', 'DESC']],
+                attributes: {
+                    include: [
+                        [fn('COUNT', col('products.id')), 'productCount'],
+                        [fn('SUM', literal("CASE WHEN products.isActive = 1 THEN 1 ELSE 0 END")), 'activeCount']
+                    ]
                 },
-                {
-                    $addFields: {
-                        productCount: { $size: "$products" },
-                        activeCount: {
-                            $size: {
-                                $filter: { input: "$products", cond: { $eq: ["$$this.isActive", true] } },
-                            },
-                        },
-                    },
-                },
-                { $project: { products: 0 } },
-            ]);
+                include: [{ model: Product, as: 'products', attributes: [] }],
+                group: ['Category.id'],
+                subQuery: false
+            });
 
             return res.status(200).json({
                 success: true,
@@ -37,7 +28,9 @@ export const getCategories = async (req, res, next) => {
             });
         }
 
-        const categories = await Category.find().sort({ createdAt: -1 });
+        const categories = await Category.findAll({
+            order: [['createdAt', 'DESC']]
+        });
 
         res.status(200).json({
             success: true,
@@ -51,7 +44,7 @@ export const getCategories = async (req, res, next) => {
 
 export const getCategory = async (req, res, next) => {
     try {
-        const category = await Category.findById(req.params.id);
+        const category = await Category.findByPk(req.params.id);
 
         if (!category) {
             return res.status(404).json({
@@ -71,9 +64,9 @@ export const getCategory = async (req, res, next) => {
 
 export const createCategory = async (req, res, next) => {
     try {
-        const { name, description, image } = req.body;
+        const { name, description, image, isActive } = req.body;
 
-        const existingCategory = await Category.findOne({ name });
+        const existingCategory = await Category.findOne({ where: { name } });
         if (existingCategory) {
             return res.status(400).json({
                 success: false,
@@ -81,7 +74,7 @@ export const createCategory = async (req, res, next) => {
             });
         }
 
-        const category = await Category.create({ name, description, image });
+        const category = await Category.create({ name, description, image, isActive });
 
         res.status(201).json({
             success: true,
@@ -95,7 +88,7 @@ export const createCategory = async (req, res, next) => {
 
 export const updateCategory = async (req, res, next) => {
     try {
-        const category = await Category.findById(req.params.id);
+        const category = await Category.findByPk(req.params.id);
 
         if (!category) {
             return res.status(404).json({
@@ -105,16 +98,12 @@ export const updateCategory = async (req, res, next) => {
         }
 
         const { name, description, image, isActive } = req.body;
-        const updatedCategory = await Category.findByIdAndUpdate(
-            req.params.id,
-            { name, description, image, isActive },
-            { new: true, runValidators: true }
-        );
+        await category.update({ name, description, image, isActive });
 
         res.status(200).json({
             success: true,
             message: "Category updated successfully",
-            category: updatedCategory,
+            category,
         });
     } catch (error) {
         next(error);
@@ -123,7 +112,7 @@ export const updateCategory = async (req, res, next) => {
 
 export const deleteCategory = async (req, res, next) => {
     try {
-        const category = await Category.findById(req.params.id);
+        const category = await Category.findByPk(req.params.id);
 
         if (!category) {
             return res.status(404).json({
@@ -133,10 +122,14 @@ export const deleteCategory = async (req, res, next) => {
         }
 
         if (category.image) {
-            await deleteFile(category.image);
+            try {
+                await deleteFile(category.image);
+            } catch (e) {
+                // GridFS may not be available with SQLite
+            }
         }
 
-        await Category.findByIdAndDelete(req.params.id);
+        await category.destroy();
 
         res.status(200).json({
             success: true,
