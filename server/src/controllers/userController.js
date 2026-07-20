@@ -4,14 +4,16 @@ export const getUsers = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, role } = req.query;
 
-        const query = {};
-        if (role) query.role = role;
+        const where = {};
+        if (role) where.role = role;
 
-        const total = await User.countDocuments(query);
-        const users = await User.find(query)
-            .sort({ createdAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const total = await User.count({ where });
+        const users = await User.findAll({
+            where,
+            order: [['createdAt', 'DESC']],
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -28,7 +30,7 @@ export const getUsers = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findByPk(req.params.id);
 
         if (!user) {
             return res.status(404).json({
@@ -48,13 +50,9 @@ export const getUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
     try {
-        const { firstName, lastName, email, role, phone, address, isActive } = req.body;
+        const { firstName, lastName, email, role, phone, street, city, state, zipCode, country, isActive } = req.body;
 
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { firstName, lastName, email, role, phone, address, isActive },
-            { new: true, runValidators: true }
-        );
+        const user = await User.findByPk(req.params.id);
 
         if (!user) {
             return res.status(404).json({
@@ -62,6 +60,8 @@ export const updateUser = async (req, res, next) => {
                 message: "User not found",
             });
         }
+
+        await user.update({ firstName, lastName, email, role, phone, street, city, state, zipCode, country, isActive });
 
         res.status(200).json({
             success: true,
@@ -75,7 +75,7 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findByPk(req.params.id);
 
         if (!user) {
             return res.status(404).json({
@@ -84,7 +84,7 @@ export const deleteUser = async (req, res, next) => {
             });
         }
 
-        await User.findByIdAndDelete(req.params.id);
+        await user.destroy();
 
         res.status(200).json({
             success: true,
