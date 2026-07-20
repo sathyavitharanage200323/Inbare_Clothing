@@ -2,12 +2,13 @@ import User from "../models/User.js";
 import { sendTokenResponse } from "../utils/sendToken.js";
 import { sendPasswordReset, sendWelcomeEmail } from "../utils/email.js";
 import crypto from "crypto";
+import { Op } from "sequelize";
 
 export const register = async (req, res, next) => {
     try {
         const { firstName, lastName, email, password } = req.body;
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
@@ -41,7 +42,7 @@ export const login = async (req, res, next) => {
             });
         }
 
-        const user = await User.findOne({ email }).select("+password");
+        const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -86,7 +87,7 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findByPk(req.user.id);
 
         res.status(200).json({
             success: true,
@@ -99,13 +100,10 @@ export const getMe = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
     try {
-        const { firstName, lastName, phone, address } = req.body;
+        const { firstName, lastName, phone, street, city, state, zipCode, country } = req.body;
 
-        const user = await User.findByIdAndUpdate(
-            req.user._id,
-            { firstName, lastName, phone, address },
-            { new: true, runValidators: true }
-        );
+        const user = await User.findByPk(req.user.id);
+        await user.update({ firstName, lastName, phone, street, city, state, zipCode, country });
 
         res.status(200).json({
             success: true,
@@ -128,7 +126,7 @@ export const updatePassword = async (req, res, next) => {
             });
         }
 
-        const user = await User.findById(req.user._id).select("+password");
+        const user = await User.findByPk(req.user.id);
 
         const isMatch = await user.comparePassword(currentPassword);
         if (!isMatch) {
@@ -151,7 +149,7 @@ export const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -189,9 +187,11 @@ export const resetPassword = async (req, res, next) => {
             .digest("hex");
 
         const user = await User.findOne({
-            passwordResetToken: hashedToken,
-            passwordResetExpires: { $gt: Date.now() },
-        }).select("+passwordResetToken +passwordResetExpires");
+            where: {
+                passwordResetToken: hashedToken,
+                passwordResetExpires: { [Op.gt]: Date.now() },
+            },
+        });
 
         if (!user) {
             return res.status(400).json({
@@ -201,8 +201,8 @@ export const resetPassword = async (req, res, next) => {
         }
 
         user.password = password;
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
+        user.passwordResetToken = null;
+        user.passwordResetExpires = null;
         await user.save();
 
         sendTokenResponse(user, 200, res, "Password reset successful");
