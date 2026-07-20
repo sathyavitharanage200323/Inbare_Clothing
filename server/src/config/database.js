@@ -1,16 +1,25 @@
-import mongoose from "mongoose";
+import { Sequelize } from "sequelize";
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.sqlite',
+    logging: process.env.NODE_ENV === 'development' ? console.log : false
+});
 
 const connectDatabase = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-
-        console.log("✅ MongoDB Connected");
+        await sequelize.authenticate();
+        console.log("✅ SQLite Database Connected");
+        
+        // Sync all models (create tables if they don't exist)
+        await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+        console.log("✅ Database Synced");
     } catch (error) {
+        console.error(error)
         console.error("❌ Database Connection Failed");
         console.error(error.message);
-
-        process.exit(1);
+        console.log("⚠️  Server will continue running without database");
     }
 };
 
-export default connectDatabase;
+export { sequelize, connectDatabase as default };
