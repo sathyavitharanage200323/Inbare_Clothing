@@ -1,4 +1,6 @@
 import Product from "../models/Product.js";
+import Category from "../models/Category.js";
+import { Op } from "sequelize";
 import { deleteFile } from "../utils/gridfs.js";
 
 export const getProducts = async (req, res, next) => {
@@ -15,29 +17,35 @@ export const getProducts = async (req, res, next) => {
             all = "false",
         } = req.query;
 
-        const query = {};
+        const where = {};
 
         if (all !== "true") {
-            query.isActive = true;
+            where.isActive = true;
         }
 
-        if (category) query.category = category;
-        if (featured === "true") query.isFeatured = true;
+        if (category) where.categoryId = category;
+        if (featured === "true") where.isFeatured = true;
         if (minPrice || maxPrice) {
-            query.price = {};
-            if (minPrice) query.price.$gte = Number(minPrice);
-            if (maxPrice) query.price.$lte = Number(maxPrice);
+            where.price = {};
+            if (minPrice) where.price[Op.gte] = Number(minPrice);
+            if (maxPrice) where.price[Op.lte] = Number(maxPrice);
         }
         if (search) {
-            query.$text = { $search: search };
+            where.name = { [Op.like]: '%' + search + '%' };
         }
 
-        const total = await Product.countDocuments(query);
-        const products = await Product.find(query)
-            .populate("category", "name slug")
-            .sort(sort)
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const orderDir = sort.startsWith('-') ? 'DESC' : 'ASC';
+        const orderField = sort.replace('-', '');
+        const order = [[orderField, orderDir]];
+
+        const total = await Product.count({ where });
+        const products = await Product.findAll({
+            where,
+            include: [{ model: Category, as: 'category', attributes: ['id', 'name', 'slug'] }],
+            order,
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -54,10 +62,9 @@ export const getProducts = async (req, res, next) => {
 
 export const getProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id).populate(
-            "category",
-            "name slug"
-        );
+        const product = await Product.findByPk(req.params.id, {
+            include: [{ model: Category, as: 'category', attributes: ['id', 'name', 'slug'] }]
+        });
 
         if (!product) {
             return res.status(404).json({
@@ -77,10 +84,10 @@ export const getProduct = async (req, res, next) => {
 
 export const getProductBySlug = async (req, res, next) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug }).populate(
-            "category",
-            "name slug"
-        );
+        const product = await Product.findOne({
+            where: { slug: req.params.slug },
+            include: [{ model: Category, as: 'category', attributes: ['id', 'name', 'slug'] }]
+        });
 
         if (!product) {
             return res.status(404).json({
@@ -100,8 +107,8 @@ export const getProductBySlug = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
     try {
-        const { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive } = req.body;
-        const product = await Product.create({ name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive });
+        const { name, description, price, discountPrice, images, categoryId, colors, sizes, stock, isFeatured, isActive } = req.body;
+        const product = await Product.create({ name, description, price, discountPrice, images, categoryId, colors, sizes, stock, isFeatured, isActive });
 
         res.status(201).json({
             success: true,
@@ -115,7 +122,7 @@ export const createProduct = async (req, res, next) => {
 
 export const updateProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findByPk(req.params.id);
 
         if (!product) {
             return res.status(404).json({
@@ -124,17 +131,13 @@ export const updateProduct = async (req, res, next) => {
             });
         }
 
-        const { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive } = req.body;
-        const updatedProduct = await Product.findByIdAndUpdate(
-            req.params.id,
-            { name, description, price, discountPrice, images, category, colors, sizes, stock, isFeatured, isActive },
-            { new: true, runValidators: true, context: 'query' }
-        );
+        const { name, description, price, discountPrice, images, categoryId, colors, sizes, stock, isFeatured, isActive } = req.body;
+        await product.update({ name, description, price, discountPrice, images, categoryId, colors, sizes, stock, isFeatured, isActive });
 
         res.status(200).json({
             success: true,
             message: "Product updated successfully",
-            product: updatedProduct,
+            product,
         });
     } catch (error) {
         next(error);
@@ -143,7 +146,7 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findByPk(req.params.id);
 
         if (!product) {
             return res.status(404).json({
@@ -152,11 +155,15 @@ export const deleteProduct = async (req, res, next) => {
             });
         }
 
-        for (const imageId of product.images) {
-            await deleteFile(imageId);
+        for (const imageId of (product.images || [])) {
+            try {
+                await deleteFile(imageId);
+            } catch (e) {
+                // GridFS may not be available with SQLite
+            }
         }
 
-        await Product.findByIdAndDelete(req.params.id);
+        await product.destroy();
 
         res.status(200).json({
             success: true,
@@ -169,9 +176,11 @@ export const deleteProduct = async (req, res, next) => {
 
 export const getFeaturedProducts = async (req, res, next) => {
     try {
-        const products = await Product.find({ isFeatured: true, isActive: true })
-            .populate("category", "name slug")
-            .limit(8);
+        const products = await Product.findAll({
+            where: { isFeatured: true, isActive: true },
+            include: [{ model: Category, as: 'category', attributes: ['id', 'name', 'slug'] }],
+            limit: 8,
+        });
 
         res.status(200).json({
             success: true,
