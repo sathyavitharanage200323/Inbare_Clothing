@@ -1,50 +1,61 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-const categorySchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: [true, "Category name is required"],
-            unique: true,
-            trim: true,
-            maxlength: [100, "Category name cannot exceed 100 characters"],
-        },
-        slug: {
-            type: String,
-            unique: true,
-            lowercase: true,
-        },
-        description: {
-            type: String,
-            trim: true,
-            maxlength: [500, "Description cannot exceed 500 characters"],
-        },
-        image: {
-            type: mongoose.Schema.Types.ObjectId,
-            default: null,
-        },
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
+const Category = sequelize.define('Category', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-    {
-        timestamps: true,
+    name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+        validate: {
+            notEmpty: { msg: "Category name is required" },
+            len: { args: [1, 100], msg: "Category name cannot exceed 100 characters" }
+        }
+    },
+    slug: {
+        type: DataTypes.STRING(120),
+        unique: true
+    },
+    description: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+        validate: {
+            len: { args: [0, 500], msg: "Description cannot exceed 500 characters" }
+        }
+    },
+    image: {
+        type: DataTypes.STRING(500),
+        allowNull: true
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    _id: {
+        type: DataTypes.VIRTUAL,
+        get() { return this.id; }
     }
-);
-
-categorySchema.pre("save", function (next) {
-    if (this.isModified("name")) {
-        this.slug = this.name
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "");
+}, {
+    tableName: 'categories',
+    timestamps: true,
+    indexes: [
+        { fields: ['isActive'] },
+        { fields: ['slug'] }
+    ],
+    hooks: {
+        beforeSave: (category) => {
+            if (category.changed('name')) {
+                category.slug = category.name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/(^-|-$)/g, "");
+            }
+        }
     }
-    next();
 });
-
-categorySchema.index({ isActive: 1 });
-
-const Category = mongoose.model("Category", categorySchema);
 
 export default Category;
