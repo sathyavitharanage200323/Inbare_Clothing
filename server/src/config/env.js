@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const required = ["MONGO_URI", "JWT_SECRET"];
+const required = ["JWT_SECRET"];
 const missing = required.filter((key) => !process.env[key]);
 
 if (missing.length > 0) {
@@ -13,7 +13,11 @@ if (missing.length > 0) {
 const config = {
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: parseInt(process.env.PORT, 10) || 5000,
-    MONGO_URI: process.env.MONGO_URI,
+    DB_HOST: process.env.DB_HOST || "localhost",
+    DB_PORT: parseInt(process.env.DB_PORT, 10) || 3306,
+    DB_NAME: process.env.DB_NAME || "inbare_clothing",
+    DB_USER: process.env.DB_USER || "root",
+    DB_PASSWORD: process.env.DB_PASSWORD || "",
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRE: process.env.JWT_EXPIRE || "7d",
     CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:5173",
