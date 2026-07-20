@@ -11,7 +11,7 @@ export const validateCoupon = async (req, res, next) => {
             });
         }
 
-        const coupon = await Coupon.findOne({ code: code.toUpperCase() });
+        const coupon = await Coupon.findOne({ where: { code: code.toUpperCase() } });
 
         if (!coupon) {
             return res.status(404).json({
@@ -59,11 +59,12 @@ export const getAllCoupons = async (req, res, next) => {
     try {
         const { page = 1, limit = 20 } = req.query;
 
-        const total = await Coupon.countDocuments();
-        const coupons = await Coupon.find()
-            .sort({ createdAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const total = await Coupon.count();
+        const coupons = await Coupon.findAll({
+            order: [['createdAt', 'DESC']],
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -82,7 +83,7 @@ export const createCoupon = async (req, res, next) => {
     try {
         const { code, discountType, discountValue, minOrderAmount, maxUses, expiresAt, isActive } = req.body;
 
-        const existing = await Coupon.findOne({ code: code.toUpperCase() });
+        const existing = await Coupon.findOne({ where: { code: code.toUpperCase() } });
         if (existing) {
             return res.status(400).json({
                 success: false,
@@ -112,7 +113,7 @@ export const createCoupon = async (req, res, next) => {
 
 export const updateCoupon = async (req, res, next) => {
     try {
-        const coupon = await Coupon.findById(req.params.id);
+        const coupon = await Coupon.findByPk(req.params.id);
         if (!coupon) {
             return res.status(404).json({
                 success: false,
@@ -143,13 +144,15 @@ export const updateCoupon = async (req, res, next) => {
 
 export const deleteCoupon = async (req, res, next) => {
     try {
-        const coupon = await Coupon.findByIdAndDelete(req.params.id);
+        const coupon = await Coupon.findByPk(req.params.id);
         if (!coupon) {
             return res.status(404).json({
                 success: false,
                 message: "Coupon not found",
             });
         }
+
+        await coupon.destroy();
 
         res.status(200).json({
             success: true,
