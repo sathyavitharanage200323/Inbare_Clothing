@@ -1,20 +1,25 @@
 import Review from "../models/Review.js";
 import Product from "../models/Product.js";
+import User from "../models/User.js";
 
 export const getAllReviews = async (req, res, next) => {
     try {
         const { page = 1, limit = 20, rating } = req.query;
 
-        const query = {};
-        if (rating) query.rating = Number(rating);
+        const where = {};
+        if (rating) where.rating = Number(rating);
 
-        const total = await Review.countDocuments(query);
-        const reviews = await Review.find(query)
-            .populate("user", "firstName lastName email avatar")
-            .populate("product", "name slug images")
-            .sort({ createdAt: -1 })
-            .skip((Number(page) - 1) * Number(limit))
-            .limit(Number(limit));
+        const total = await Review.count({ where });
+        const reviews = await Review.findAll({
+            where,
+            include: [
+                { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'email', 'avatar'] },
+                { model: Product, as: 'product', attributes: ['id', 'name', 'slug', 'images'] }
+            ],
+            order: [['createdAt', 'DESC']],
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
+        });
 
         res.status(200).json({
             success: true,
@@ -31,9 +36,13 @@ export const getAllReviews = async (req, res, next) => {
 
 export const getProductReviews = async (req, res, next) => {
     try {
-        const reviews = await Review.find({ product: req.params.productId })
-            .populate("user", "firstName lastName avatar")
-            .sort({ createdAt: -1 });
+        const reviews = await Review.findAll({
+            where: { productId: req.params.productId },
+            include: [
+                { model: User, as: 'user', attributes: ['id', 'firstName', 'lastName', 'avatar'] }
+            ],
+            order: [['createdAt', 'DESC']],
+        });
 
         res.status(200).json({
             success: true,
@@ -50,7 +59,7 @@ export const createReview = async (req, res, next) => {
         const { rating, comment } = req.body;
         const { productId } = req.params;
 
-        const product = await Product.findById(productId);
+        const product = await Product.findByPk(productId);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -59,8 +68,7 @@ export const createReview = async (req, res, next) => {
         }
 
         const existingReview = await Review.findOne({
-            product: productId,
-            user: req.user._id,
+            where: { productId, userId: req.user.id }
         });
 
         if (existingReview) {
@@ -71,8 +79,8 @@ export const createReview = async (req, res, next) => {
         }
 
         const review = await Review.create({
-            product: productId,
-            user: req.user._id,
+            productId,
+            userId: req.user.id,
             rating,
             comment,
         });
@@ -91,7 +99,7 @@ export const updateReview = async (req, res, next) => {
     try {
         const { rating, comment } = req.body;
 
-        let review = await Review.findById(req.params.id);
+        const review = await Review.findByPk(req.params.id);
 
         if (!review) {
             return res.status(404).json({
@@ -100,16 +108,14 @@ export const updateReview = async (req, res, next) => {
             });
         }
 
-        if (review.user.toString() !== req.user._id.toString()) {
+        if (review.userId !== req.user.id) {
             return res.status(403).json({
                 success: false,
                 message: "Not authorized to update this review",
             });
         }
 
-        review.rating = rating;
-        review.comment = comment;
-        await review.save();
+        await review.update({ rating, comment });
 
         res.status(200).json({
             success: true,
@@ -123,7 +129,7 @@ export const updateReview = async (req, res, next) => {
 
 export const deleteReview = async (req, res, next) => {
     try {
-        const review = await Review.findById(req.params.id);
+        const review = await Review.findByPk(req.params.id);
 
         if (!review) {
             return res.status(404).json({
@@ -132,17 +138,14 @@ export const deleteReview = async (req, res, next) => {
             });
         }
 
-        if (
-            review.user.toString() !== req.user._id.toString() &&
-            req.user.role !== "admin"
-        ) {
+        if (review.userId !== req.user.id && req.user.role !== "admin") {
             return res.status(403).json({
                 success: false,
                 message: "Not authorized to delete this review",
             });
         }
 
-        await Review.findByIdAndDelete(req.params.id);
+        await review.destroy();
 
         res.status(200).json({
             success: true,
