@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildDir = "server"
+
+[deploy]
+startCommand = "cd server && node src/server.js"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5

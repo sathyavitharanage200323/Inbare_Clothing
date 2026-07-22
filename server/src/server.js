@@ -7,17 +7,17 @@ import "./models/index.js"; // Import models and associations
 
 async function seedAdmin() {
     try {
-        const existing = await User.findOne({ where: { email: "admin@inbare.com" } });
+        const existing = await User.findOne({ where: { email: config.ADMIN_EMAIL } });
         if (!existing) {
             await User.create({
                 firstName: "Admin",
                 lastName: "INBARE",
-                email: "admin@inbare.com",
-                password: "admin123",
+                email: config.ADMIN_EMAIL,
+                password: config.ADMIN_PASSWORD,
                 role: "admin",
                 isEmailVerified: true,
             });
-            logger.info("✅ Admin user created: admin@inbare.com / admin123");
+            logger.info("✅ Admin user created from environment variables");
         }
     } catch (error) {
         logger.error("Failed to seed admin user:", error.message);

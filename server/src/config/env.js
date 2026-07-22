@@ -13,11 +13,7 @@ if (missing.length > 0) {
 const config = {
     NODE_ENV: process.env.NODE_ENV || "development",
     PORT: parseInt(process.env.PORT, 10) || 5000,
-    DB_HOST: process.env.DB_HOST || "localhost",
-    DB_PORT: parseInt(process.env.DB_PORT, 10) || 3306,
-    DB_NAME: process.env.DB_NAME || "inbare_clothing",
-    DB_USER: process.env.DB_USER || "root",
-    DB_PASSWORD: process.env.DB_PASSWORD || "",
+    DATABASE_URL: process.env.DATABASE_URL || "",
     JWT_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRE: process.env.JWT_EXPIRE || "7d",
     CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:5173",
@@ -27,6 +23,8 @@ const config = {
     SMTP_PASS: process.env.SMTP_PASS || "",
     EMAIL_FROM: process.env.EMAIL_FROM || "noreply@inbare.com",
     CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@inbare.com",
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "admin123",
 };
 
 export default config;
